@@ -22,7 +22,12 @@ export default async function handler(
       const bookmarks = await readOnlyClient.v2.bookmarks({
         expansions: ["referenced_tweets.id"],
         "media.fields": ["duration_ms", "url"],
-        "tweet.fields": ["created_at", "attachments", "in_reply_to_user_id"],
+        "tweet.fields": [
+          "created_at",
+          "attachments",
+          "in_reply_to_user_id",
+          "author_id",
+        ],
       });
 
       let allBookmarks: TweetV2[] = [];
@@ -30,7 +35,28 @@ export default async function handler(
         // console.log("all bookmarksss", bookmark);
         allBookmarks = [...allBookmarks, bookmark];
       }
-      return res.json(allBookmarks);
+      let tweeps: any[] = [];
+
+      allBookmarks.map((tweet) => {
+        if (tweet !== undefined) {
+          tweeps = [...tweeps, tweet?.author_id];
+        }
+      });
+
+      const users = await readOnlyClient.v2.users(tweeps);
+      const returnResponse = allBookmarks.map((tweet, idx) => {
+        return {
+          name: users.data[idx].name,
+          username: users.data[idx].username,
+          protected: users.data[idx].protected,
+          text: tweet.text,
+          id: tweet.id,
+          created_at: tweet.created_at,
+          attachments: tweet.attachments,
+        };
+      });
+
+      return res.json(returnResponse);
     } catch (error) {
       return res.status(400).json({ status: error });
     }

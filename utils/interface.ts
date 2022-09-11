@@ -5,4 +5,7 @@ export interface BookMarkInterface {
   attachment: {
     media_keys: string[];
   };
+  name: string;
+  username: string;
+  author_id: string;
 }

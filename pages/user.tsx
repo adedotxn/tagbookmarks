@@ -7,6 +7,7 @@ import {
   Group,
   Text,
 } from "@mantine/core";
+import { useMediaQuery } from "@mantine/hooks";
 import { IconBrandTwitter, IconSun } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
@@ -44,10 +45,13 @@ const useStyles = createStyles((theme, _params, getRef) => ({
       },
     },
 
-    [`@media (min-width: ${theme.breakpoints.md}px)`]: {
-      h1: {
-        fontSize: "4rem",
-        letterSpacing: ".5rem",
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+      [`& .${getRef("child")}`]: {
+        fontSize: theme.fontSizes.xs,
+      },
+
+      [`& .${getRef("cards")}`]: {
+        width: "40vw",
       },
     },
   },
@@ -73,12 +77,16 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   },
 
   cards: {
+    ref: getRef("cards"),
     width: "80vw",
   },
 }));
 
 const User = () => {
   const { classes } = useStyles();
+  const matches = useMediaQuery("(max-width: 700px)", true, {
+    getInitialValueInEffect: false,
+  });
 
   const { data: session } = useSession();
 
@@ -129,8 +137,8 @@ const User = () => {
           >
             <Card.Section></Card.Section>
 
-            <Group position="center" mt="md" mb="xs">
-              <Text weight={500}>Username</Text>
+            <Group position="center" mt="sm" mb="xs">
+              <Text weight={500}>@{data.username}</Text>
               <Badge color="pink" variant="light">
                 Tag
               </Badge>
@@ -154,7 +162,7 @@ const User = () => {
                 {tweetLink}
               </Button>
 
-              <Button variant="light" color="blue" mt="md" radius="md">
+              <Button variant="light" color="blue" mt="sm" radius="md">
                 Add tag
               </Button>
             </Group>
