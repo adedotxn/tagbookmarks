@@ -1,14 +1,13 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
-import { getSession } from "next-auth/react";
 import { TweetV2, TwitterApi } from "twitter-api-v2";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const session = await getSession({ req });
+  // const session = await getSession({ req });
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const ACCESS_TOKEN: string =
     token?.twitter.accessToken !== undefined ? token.twitter.accessToken : "";
@@ -18,6 +17,7 @@ export default async function handler(
     console.log("access token type", typeof ACCESS_TOKEN);
     const readOnlyClient = twitterClient.readOnly;
 
+    let nextToken;
     try {
       const bookmarks = await readOnlyClient.v2.bookmarks({
         expansions: ["referenced_tweets.id"],
@@ -28,13 +28,18 @@ export default async function handler(
           "in_reply_to_user_id",
           "author_id",
         ],
+        max_results: 10,
       });
 
+      let meta = bookmarks.meta;
+      console.log("meta", bookmarks.meta);
+
       let allBookmarks: TweetV2[] = [];
+
       for await (const bookmark of bookmarks) {
-        // console.log("all bookmarksss", bookmark);
         allBookmarks = [...allBookmarks, bookmark];
       }
+
       let tweeps: any[] = [];
 
       allBookmarks.map((tweet) => {
@@ -56,9 +61,16 @@ export default async function handler(
         };
       });
 
-      return res.json(returnResponse);
+      return res.json({
+        data: returnResponse,
+        token: meta,
+      });
     } catch (error) {
-      return res.status(400).json({ status: error });
+      return res
+        .status(400)
+        .json({ status: error, message: "Error in getting bookmarks" });
     }
+  } else {
+    return res.status(400).json({ status: "Access Token not found" });
   }
 }

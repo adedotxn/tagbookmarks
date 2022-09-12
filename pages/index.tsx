@@ -3,6 +3,7 @@ import { IconBrandTwitter } from "@tabler/icons";
 import type { NextPage } from "next";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const useStyles = createStyles((theme, _params, getRef) => ({
   wrapper: {
@@ -54,7 +55,14 @@ const Home: NextPage = () => {
   const { classes } = useStyles();
 
   const { data: session } = useSession();
+  const router = useRouter();
   // console.log("Session", session)
+
+  // useEffect(() => {
+  //   if (session) {
+  //     router.push("/user");
+  //   }
+  // }, [session]);
 
   return (
     <div className={classes.wrapper}>
