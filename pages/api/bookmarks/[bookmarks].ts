@@ -7,17 +7,27 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // const session = await getSession({ req });
+  const { bookmarks: number } = req.query;
+  let maxResults: number = +number!;
+
+  // console.log("number: ", number);
+  // console.log("typeof number: ", typeof number);
+
+  // console.log("max: ", maxResults);
+  // console.log("typeof max: ", typeof maxResults);
+
+  // console.log("query", req.query);
+  // res.json(maxResults);
+
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const ACCESS_TOKEN: string =
     token?.twitter.accessToken !== undefined ? token.twitter.accessToken : "";
 
   if (ACCESS_TOKEN !== undefined || "") {
     const twitterClient = new TwitterApi(ACCESS_TOKEN);
-    console.log("access token type", typeof ACCESS_TOKEN);
+    console.log("access token type @dynamo", typeof ACCESS_TOKEN);
     const readOnlyClient = twitterClient.readOnly;
 
-    let nextToken;
     try {
       const bookmarks = await readOnlyClient.v2.bookmarks({
         expansions: ["referenced_tweets.id"],
@@ -28,32 +38,26 @@ export default async function handler(
           "in_reply_to_user_id",
           "author_id",
         ],
-        max_results: 10,
+        max_results: maxResults,
       });
-
-      let meta = bookmarks.meta;
-      console.log("meta", bookmarks.meta);
 
       let allBookmarks: TweetV2[] = [];
 
       for await (const bookmark of bookmarks) {
         allBookmarks = [...allBookmarks, bookmark];
       }
-      console.log("loop? : done");
+      // console.log("loop? : done");
 
       let tweeps: any[] = [];
 
-      console.log("map1?");
       allBookmarks.map((tweet) => {
         if (tweet !== undefined) {
           tweeps = [...tweeps, tweet?.author_id];
         }
       });
-      console.log("map1? : done");
 
       const users = await readOnlyClient.v2.users(tweeps);
 
-      console.log("map2?");
       const returnResponse = allBookmarks.map((tweet, idx) => {
         return {
           name: users.data[idx].name,
@@ -65,12 +69,11 @@ export default async function handler(
           attachments: tweet.attachments,
         };
       });
-      console.log("map2? : done");
 
-      console.log("response", returnResponse);
+      // console.log("response", returnResponse);
       return res.json({
         data: returnResponse,
-        token: bookmarks.meta,
+        count: bookmarks.meta.result_count,
       });
     } catch (error) {
       return res

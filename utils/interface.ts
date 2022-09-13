@@ -9,3 +9,8 @@ export interface BookMarkInterface {
   username: string;
   author_id: string;
 }
+
+export interface bookmarkContextInterface {
+  activeBookmarks: BookMarkInterface[];
+  setActiveBookmarks: React.Dispatch<React.SetStateAction<BookMarkInterface[]>>;
+}

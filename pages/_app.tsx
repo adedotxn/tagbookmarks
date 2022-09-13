@@ -7,6 +7,7 @@ import {
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
 import "../styles/globals.css";
+import { UtilityProvider } from "../utils/context";
 
 const queryClient = new QueryClient();
 
@@ -23,18 +24,21 @@ function MyApp({ Component, pageProps }: AppProps) {
       <SessionProvider session={pageProps.session}>
         <QueryClientProvider client={queryClient}>
           <Hydrate state={pageProps.dehydratedState}>
-            <MantineProvider
-              withGlobalStyles
-              withNormalizeCSS
-              theme={{
-                fontFamily: "Kanit,Verdana, sans-serif",
-                spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
-                breakpoints: { md: 768, lg: 1024 },
-                colorScheme: "dark",
-              }}
-            >
-              <Component {...pageProps} />
-            </MantineProvider>
+            <UtilityProvider>
+              <MantineProvider
+                withGlobalStyles
+                withNormalizeCSS
+                theme={{
+                  fontFamily: "Kanit,Verdana, sans-serif",
+                  spacing: { xs: 15, sm: 20, md: 25, lg: 30, xl: 40 },
+                  breakpoints: { md: 768, lg: 1024 },
+                  colorScheme: "dark",
+                  loader: "bars",
+                }}
+              >
+                <Component {...pageProps} />
+              </MantineProvider>
+            </UtilityProvider>
           </Hydrate>
         </QueryClientProvider>
       </SessionProvider>

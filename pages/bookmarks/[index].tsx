@@ -8,20 +8,14 @@ import {
   Input,
   Modal,
   MultiSelect,
-  Skeleton,
   Text,
 } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconBrandTwitter, IconSearch, IconSun } from "@tabler/icons";
-import { dehydrate, QueryClient } from "@tanstack/react-query";
-import { GetServerSidePropsContext } from "next";
-import { unstable_getServerSession } from "next-auth";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
-import { ChangeEvent, useEffect, useState } from "react";
-import { useBookmarks, userBkmrks } from "../utils/api/api-hooks";
-import { BookMarkInterface } from "../utils/interface";
-import { authOptions } from "./api/auth/[...nextauth]";
+import { ChangeEvent, useState } from "react";
+import { useActiveBookmarks } from "../../utils/context";
 
 interface tagInterface {
   tweetId: string;
@@ -120,7 +114,7 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   },
 }));
 
-const User = () => {
+const Bookmarks = () => {
   const { classes } = useStyles();
   const matches = useMediaQuery("(max-width: 700px)", true, {
     getInitialValueInEffect: false,
@@ -156,40 +150,10 @@ const User = () => {
 
   const { data: session } = useSession();
 
-  function useData() {
-    const { isLoading, error, data } = useBookmarks();
-    return { data, error, isLoading };
-  }
-
-  const allBoomarks = useData();
-
-  const loadingState = allBoomarks.isLoading;
-  const userData = allBoomarks.data;
-  const errorState = allBoomarks.error;
-
-  const [userBookmarks, setUserBookmarks] = useState<BookMarkInterface[]>([]);
-
-  useEffect(() => {
-    userData !== undefined &&
-      userData.data !== undefined &&
-      setUserBookmarks(userData.data.data);
-  }, [userData]);
-
   const [search, setSearch] = useState<string>("");
   const [openSearch, setOpenSearch] = useState(false);
 
-  if (loadingState) {
-    return (
-      <div className={classes.skeleton}>
-        <>
-          <Skeleton height={50} circle mb="xl" />
-          <Skeleton height={8} radius="xl" />
-          <Skeleton height={8} mt={6} radius="xl" />
-          <Skeleton height={8} mt={6} width="70%" radius="xl" />
-        </>
-      </div>
-    );
-  }
+  const { activeBookmarks } = useActiveBookmarks();
 
   if (session) {
     return (
@@ -238,16 +202,17 @@ const User = () => {
         )}
 
         <main>
-          {userBookmarks
+          <Text>Count: {activeBookmarks.length} </Text>
+          {activeBookmarks
             .filter((data) => {
               if (search === "") {
-                return userBookmarks;
+                return activeBookmarks;
               } else if (
                 data.text.toLowerCase().includes(search.toLowerCase()) ||
                 data.username.toLowerCase().includes(search.toLowerCase()) ||
                 data.name.toLowerCase().includes(search.toLowerCase())
               ) {
-                return userBookmarks;
+                return activeBookmarks;
               }
             })
             ?.map((data) => {
@@ -347,22 +312,4 @@ const User = () => {
   );
 };
 
-export default User;
-
-export async function getServerSideProps(context: GetServerSidePropsContext) {
-  const session = await unstable_getServerSession(
-    context.req,
-    context.res,
-    authOptions
-  );
-
-  const queryClient = new QueryClient();
-
-  await queryClient.prefetchQuery(["Bookmarks"], () => userBkmrks());
-
-  return {
-    props: {
-      dehydratedState: dehydrate(queryClient),
-    },
-  };
-}
+export default Bookmarks;

@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: "/api/twitter",
+  baseURL: "/api",
   headers: {
     "Content-type": "application/json",
   },
