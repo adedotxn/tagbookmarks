@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Badge,
   Button,
   Card,
@@ -10,15 +9,13 @@ import {
   MultiSelect,
   Text,
 } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
-import { IconBrandTwitter, IconSearch, IconSun } from "@tabler/icons";
-import { signIn, signOut, useSession } from "next-auth/react";
-import Image from "next/image";
+import { useDebouncedValue, useMediaQuery } from "@mantine/hooks";
+import { IconBrandTwitter, IconPlus, IconSearch } from "@tabler/icons";
+import { signIn, useSession } from "next-auth/react";
 import { ChangeEvent, useState } from "react";
 import { useActiveBookmarks } from "../../utils/context";
 
 interface tagInterface {
-  tweetId: string;
   label: string;
   value: string;
 }
@@ -26,31 +23,7 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   wrapper: {
     display: "grid",
     placeItems: "center",
-
-    header: {
-      display: "flex",
-      placeItems: "center",
-      justifyContent: "space-between",
-      padding: ".1rem 1.5rem .2rem 1.5rem",
-      margin: 0,
-      borderBottom: `1px solid grey,`,
-      width: "100vw",
-
-      h1: {
-        padding: 0,
-        // margin: "0 .3rem 0 4rem",
-        textTransform: "uppercase",
-        fontSize: "1.5rem",
-        background: theme.fn.gradient({
-          from: "blue",
-          to: "teal",
-          deg: 20,
-        }),
-        backgroundClip: "text",
-        WebkitBackgroundClip: "text",
-        WebkitTextFillColor: "transparent",
-      },
-    },
+    // border: "1px solid green",
 
     [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
       [`& .${getRef("child")}`]: {
@@ -60,19 +33,45 @@ const useStyles = createStyles((theme, _params, getRef) => ({
       [`& .${getRef("cards")}`]: {
         width: "40vw",
       },
+
+      [`& .${getRef("mid_section")}`]: {
+        display: "flex",
+      },
+
+      [`& .${getRef("search")}`]: {
+        input: {
+          width: "40vw",
+          marginBottom: ".6rem",
+        },
+      },
     },
   },
-
-  avi: {
-    // marginLeft: "1rem",
-    borderRadius: "50%",
+  header: {
     display: "flex",
     alignItems: "center",
+    justifyContent: "space-between",
+    padding: "0 1rem",
+    margin: 0,
+    // border: "1px solid red",
+    width: "95vw",
 
-    span: {
-      marginLeft: ".5rem",
+    h1: {
+      padding: 0,
+      // margin: "0 .3rem 0 4rem",
+      textTransform: "uppercase",
+      fontSize: "1.5rem",
+      background: theme.fn.gradient({
+        from: "blue",
+        to: "teal",
+        deg: 20,
+      }),
+      backgroundClip: "text",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
     },
   },
+
+  avi: {},
 
   login_btn: {
     textTransform: "uppercase",
@@ -86,6 +85,7 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   cards: {
     ref: getRef("cards"),
     width: "80vw",
+    marginTop: "0rem",
   },
 
   skeleton: {
@@ -93,30 +93,37 @@ const useStyles = createStyles((theme, _params, getRef) => ({
     placeItems: "center",
   },
 
-  search_section: {
-    position: "fixed",
-    top: "4rem",
-    zIndex: 3,
+  mid_section: {
+    ref: getRef("mid_section"),
     background: "transparent",
-    width: "100vw",
+    width: "90vw",
     backdropFilter: "blur(10px)",
     display: "grid",
     placeItems: "center",
+    alignItems: "center",
+    justifyContent: "space-between",
+  },
 
-    div: {
-      display: "grid",
-      placeItems: "center",
+  search: {
+    ref: getRef("search"),
+    display: "grid",
+    placeItems: "center",
 
-      input: {
-        width: "60vw",
-      },
+    input: {
+      width: "80vw",
+    },
+  },
+
+  modal: {
+    button: {
+      marginTop: ".6rem",
     },
   },
 }));
 
 const Bookmarks = () => {
   const { classes } = useStyles();
-  const matches = useMediaQuery("(max-width: 700px)", true, {
+  const matches = useMediaQuery("(min-width: 768px)", true, {
     getInitialValueInEffect: false,
   });
 
@@ -127,90 +134,128 @@ const Bookmarks = () => {
     { value: "ng", label: "Angular" },
   ];
   const [tags, setTags] = useState<tagInterface[]>([
-    { tweetId: "", value: "important", label: "Important" },
-    { tweetId: "", value: "funny", label: "Funny" },
-    { tweetId: "", value: "relatable", label: "Relatable" },
+    { value: "important", label: "Important" },
+    { value: "funny", label: "Funny" },
+    { value: "relatable", label: "Relatable" },
   ]);
 
   const handleTagModal = (id: string) => {
     setTagModal(id);
   };
 
-  const createTag = (query: string, id: string) => {
-    const item = {
-      tweetId: id,
-      value: query,
-      label: query,
-    };
-    setTags((current) => [...current, item]);
-
-    console.log("tags", tags);
-    return item;
-  };
-
   const { data: session } = useSession();
 
   const [search, setSearch] = useState<string>("");
   const [openSearch, setOpenSearch] = useState(false);
+  const [debounced] = useDebouncedValue(search, 200);
+
+  const [openModal, setOpenModal] = useState(false);
 
   const { activeBookmarks } = useActiveBookmarks();
 
   if (session) {
     return (
       <div className={classes.wrapper}>
-        <header>
+        <header className={classes.header}>
           <div className={classes.avi}>
-            <Image
+            {matches && (
+              <Button
+                // mt={20}
+                component="a"
+                target="_blank"
+                variant="default"
+                color="gray"
+                compact
+              >
+                View tagged bookmark-tweets
+              </Button>
+            )}
+            {/* <Image
               src={session?.user?.image!}
               alt="profile_pic"
               width={30}
               height={30}
-            />
-            {/* <span>{session?.user?.name}</span> */}
+            /> */}
           </div>
 
           <h1>Bkmrked</h1>
 
-          <div>
-            <ActionIcon
-              onClick={() => setOpenSearch(!openSearch)}
-              variant={openSearch ? "filled" : "light"}
-            >
-              <IconSearch size={20} />
-            </ActionIcon>
-
-            <ActionIcon onClick={() => signOut()} variant="light">
-              <IconSun size={20} />
-            </ActionIcon>
-          </div>
+          {matches && (
+            <div>
+              <Button
+                // mt={20}
+                component="a"
+                target="_blank"
+                variant="default"
+                color="gray"
+                compact
+              >
+                Back to homepage
+              </Button>
+            </div>
+          )}
         </header>
 
-        {openSearch && (
-          <section className={classes.search_section}>
-            <div>
-              <Input
-                icon={<IconSearch />}
-                variant="filled"
-                placeholder="Search through bookmarks with tweet/username/name"
-                value={search}
-                onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                  setSearch(e.target.value)
-                }
-              />
-            </div>
-          </section>
-        )}
+        <section className={classes.mid_section}>
+          <div className={classes.search}>
+            <Text>Tweets found: {activeBookmarks.length} </Text>
+            <Input
+              icon={<IconSearch />}
+              variant="filled"
+              placeholder="Search through bookmarks with tweet/username/name"
+              value={search}
+              onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                setSearch(e.target.value)
+              }
+            />
+          </div>
+
+          <div>
+            <Button
+              onClick={() => setOpenModal(true)}
+              variant="default"
+              leftIcon={<IconPlus />}
+            >
+              Create Tag
+            </Button>
+          </div>
+        </section>
+
+        <Modal
+          opened={openModal}
+          onClose={() => setOpenModal(false)}
+          title="Create Tags to put on your bookmarks"
+          className={classes.modal}
+        >
+          <MultiSelect
+            label="Type in a new tag to add to your list of tags"
+            data={tags}
+            placeholder="e.g 'Tech Tweets'"
+            searchable
+            creatable
+            getCreateLabel={(query) => `+ Create ${query}`}
+            onCreate={(query) => {
+              const item = { value: query, label: query };
+              setTags((current) => [...current, item]);
+              return item;
+            }}
+          />
+
+          <Button onClick={() => setOpenModal(false)} variant="default">
+            Create New Tag
+          </Button>
+        </Modal>
 
         <main>
-          <Text>Count: {activeBookmarks.length} </Text>
+          {/* <Text>Tweets found: {activeBookmarks.length} </Text> */}
           {activeBookmarks
             .filter((data) => {
-              if (search === "") {
+              if (debounced === "") {
                 return activeBookmarks;
               } else if (
-                data.text.toLowerCase().includes(search.toLowerCase()) ||
-                data.username.toLowerCase().includes(search.toLowerCase()) ||
-                data.name.toLowerCase().includes(search.toLowerCase())
+                data.text.toLowerCase().includes(debounced.toLowerCase()) ||
+                data.username.toLowerCase().includes(debounced.toLowerCase()) ||
+                data.name.toLowerCase().includes(debounced.toLowerCase())
               ) {
                 return activeBookmarks;
               }
@@ -271,26 +316,6 @@ const Bookmarks = () => {
                       >
                         Add tag
                       </Button>
-
-                      <Modal
-                        opened={tagModal === data.id ? true : false}
-                        onClose={() => setTagModal("")}
-                        title="Type in a tag "
-                      >
-                        <MultiSelect
-                          label="Tags"
-                          data={tags}
-                          placeholder="Select items"
-                          searchable
-                          creatable
-                          getCreateLabel={(query) => `+ Create ${query}`}
-                          onCreate={(query) => createTag(query, data.id)}
-                        />
-
-                        <Text>
-                          {tags[0].tweetId} --- {tags[0].value}{" "}
-                        </Text>
-                      </Modal>
                     </Group>
                   </Card>
 

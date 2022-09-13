@@ -196,6 +196,16 @@ const User = () => {
       <div className={classes.wrapper}>
         <header>
           <div className={classes.avi}>
+            <Button
+              mt={20}
+              leftIcon={<IconBrandTwitter />}
+              component="a"
+              target="_blank"
+              variant="default"
+              color="gray"
+            >
+              View tagged bookmark-tweets
+            </Button>
             <Image
               src={session?.user?.image!}
               alt="profile_pic"

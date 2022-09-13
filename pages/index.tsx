@@ -21,6 +21,20 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   container: {
     display: "grid",
     placeItems: "center",
+
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+      [`& .${getRef("child")}`]: {
+        fontSize: theme.fontSizes.xs,
+      },
+
+      [`& .${getRef("title_1")}`]: {
+        fontSize: "3rem",
+      },
+      [`& .${getRef("title_2")}`]: {
+        fontSize: "2.5rem",
+        marginTop: "1.3rem",
+      },
+    },
   },
   wrapper: {
     display: "grid",
@@ -48,12 +62,16 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   header_details: {
     display: "flex",
     alignItems: "center",
+    marginTop: "1rem",
+
+    div: {
+      marginLeft: ".2rem",
+    },
 
     h3: {},
 
     img: {
       borderRadius: "50%",
-      marginLeft: ".5rem",
     },
   },
 
@@ -114,13 +132,16 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   },
 
   outOfSession: {
-    width: "80vw",
+    width: "90vw",
     display: "grid",
     placeItems: "center",
     textAlign: "center",
   },
 
   title_1: {
+    ref: getRef("title_1"),
+
+    fontSize: "2rem",
     span: {
       background: theme.fn.gradient({
         from: "cyan",
@@ -135,6 +156,11 @@ const useStyles = createStyles((theme, _params, getRef) => ({
   },
 
   title_2: {
+    ref: getRef("title_2"),
+    marginTop: "1rem",
+    fontSize: "1.7rem",
+
+    fontWeight: 500,
     span: {
       background: theme.fn.gradient({
         from: "cyan",
@@ -221,17 +247,17 @@ const Load = () => {
   return (
     <div className={classes.container}>
       <header className={classes.header}>
-        <Title order={2}>Bkmrked</Title>
+        <Title order={2}>BKMRKD</Title>
         {session && (
           <>
-            <div className={classes.header_details}>
+            {/* <div className={classes.header_details}>
               <Title order={3}>{session.user?.name}</Title>
               <Group position="center">
                 <Indicator color="lime">
                   <Avatar size="sm" src={session?.user?.image!} />
                 </Indicator>
               </Group>
-            </div>
+            </div> */}
 
             <Button onClick={() => signOut()} variant="default" color="gray">
               Log Out
@@ -240,18 +266,19 @@ const Load = () => {
         )}
       </header>
 
-      {/* {session && (
-        <section className={classes.details}>
-          <div>
+      {session && (
+        <div>
+          <div className={classes.header_details}>
+            <Title order={3}>{session?.user?.name}</Title>
             <Group position="center">
               <Indicator color="lime">
-                <Avatar size="lg" src={session?.user?.image!} />
+                <Avatar size="sm" src={session?.user?.image!} />
               </Indicator>
             </Group>
           </div>
-          <Title order={2}>{session.user?.name}</Title>
-        </section>
-      )} */}
+        </div>
+      )}
+
       <div className={classes.wrapper}>
         {session ? (
           <>
@@ -329,7 +356,7 @@ const Load = () => {
         ) : (
           <>
             <section className={classes.outOfSession}>
-              <Title className={classes.title_2} order={2}>
+              <Title className={classes.title_1} order={2}>
                 <span>Bkmrkd</span> can be used to search through your twitter
                 bookmarks.
               </Title>
