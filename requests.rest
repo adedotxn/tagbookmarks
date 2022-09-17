@@ -1,0 +1,27 @@
+### 
+POST http://localhost:3000/api/tags/add
+Content-Type: application/json
+
+{
+    "tweetId" : "99999999", 
+    "tag" : ["Nuuuu", "Creative"]
+}
+
+###
+GET http://localhost:3000/api/tags/all
+
+### 
+POST http://localhost:3000/api/tags/update/632515cf868025ad39f6baac
+Content-Type: application/json
+
+{
+    "newTag" : "Funny" 
+}
+
+###
+POST http://localhost:3000/api/tags/delete/tag/632516dc34ead5c7e00fd391
+Content-Type: application/json
+
+{
+    "tag" : "Nuuuu" 
+}
