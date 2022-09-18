@@ -7,6 +7,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  // CHECK THE SPLICING LOGIC, IT SEEMS TO BE WRONG
   try {
     console.log("Connecting to DB");
     await connect();

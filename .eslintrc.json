@@ -14,5 +14,10 @@
   ],
   "rules": {
     "no-unused-vars": [1, { "args": "after-used", "argsIgnorePattern": "^_" }]
+  },
+  "env": {
+    "es2020": true,
+    "node": true,
+    "jest": true
   }
 }

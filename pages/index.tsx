@@ -176,8 +176,10 @@ const useStyles = createStyles((theme, _params, getRef) => ({
 const Load = () => {
   const { classes } = useStyles();
   const { data: session } = useSession();
-  const [noOfBookmarks, setNumberOfBookmarks] = useState<number>(0);
+  const [noOfBookmarks, setNumberOfBookmarks] = useState<number>(2);
   const [errorMessage, setErrorMessage] = useState("");
+
+  console.log("session", session);
 
   const validate = (number: number) => {
     if (number === 0 || (number > 1 && number <= 50)) {
@@ -195,6 +197,7 @@ const Load = () => {
 
   useEffect(() => {
     validate(noOfBookmarks);
+    console.log("type of number", typeof noOfBookmarks);
   }, [noOfBookmarks]);
 
   // const [bookmarks, setBookmarks] = useState([]);
@@ -211,7 +214,7 @@ const Load = () => {
   } = useQuery(
     ["Bookmarks", noOfBookmarks],
     async () => {
-      const fetch = await apiClient.get(`/bookmarks/${noOfBookmarks}`);
+      const fetch = await apiClient.get(`/twitter/${noOfBookmarks}`);
       console.log("fetch.data -- ", fetch.data);
       return fetch.data;
     },

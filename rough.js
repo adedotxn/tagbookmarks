@@ -61,3 +61,16 @@ const join4 = bkdm.map((e, idx) => {
 // console.log(join);
 // console.log(join2)
 console.log(join4);
+
+const session2 = {
+  expires: "dfdkjfdk",
+
+  user: {
+    imqge: "dfkjfk",
+    name: "sdsdjhsd",
+  },
+};
+
+session2["user"].id = "askaskj";
+
+console.log(session2);

@@ -2,14 +2,16 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../db/connect";
 import Collection from "../../../db/schema";
+import logger from "../../../utils/logger";
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   try {
-    console.log("Connecting to DB");
+    logger.info("Connecting to DB");
     await connect();
-    console.log("Connected to DB");
+    logger.info("Connected to DB");
 
     const data = await Collection.find().sort({ time: -1 });
 

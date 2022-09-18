@@ -46,7 +46,14 @@ export const authOptions: NextAuthOptions = {
         token["twitter"].userId = user?.id;
       }
 
+      console.log(account?.refresh_token ? true : false);
+      console.log("at callback", token);
+
       return token;
+    },
+    async session({ session, user, token }) {
+      session["user"].id = token.twitter.userId;
+      return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET || "123",
