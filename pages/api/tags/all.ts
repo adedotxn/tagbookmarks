@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../db/connect";
-import Collection from "../../../db/schema";
+import Collection from "../../../db/models/collection";
 import logger from "../../../utils/logger";
 
 export default async function handler(
@@ -9,9 +9,8 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    logger.info("Connecting to DB");
     await connect();
-    logger.info("Connected to DB");
+    logger.info("/tags/all");
 
     const data = await Collection.find().sort({ time: -1 });
 

@@ -10,13 +10,13 @@ export default async function handler(
   const { bookmarks: number } = req.query;
   let maxResults: number = +number!;
 
-  console.log("number: ", number);
-  console.log("typeof number: ", typeof number);
+  // console.log("number: ", number);
+  // console.log("typeof number: ", typeof number);
 
-  console.log("\nmax: ", maxResults);
-  console.log("typeof max: ", typeof maxResults);
+  // console.log("\nmax: ", maxResults);
+  // console.log("typeof max: ", typeof maxResults);
 
-  console.log("\nquery", req.query);
+  // console.log("\nquery", req.query);
   // res.json(maxResults);
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -24,8 +24,9 @@ export default async function handler(
     token?.twitter.accessToken !== undefined ? token.twitter.accessToken : "";
 
   if (ACCESS_TOKEN !== undefined || "") {
+    console.log("\n\taccess token type", ACCESS_TOKEN);
     const twitterClient = new TwitterApi(ACCESS_TOKEN);
-    console.log("\naccess token type @dynamo", typeof ACCESS_TOKEN);
+    console.log("access token type @dynamo", typeof ACCESS_TOKEN);
     console.log("using: ", maxResults);
     const readOnlyClient = twitterClient.readOnly;
 

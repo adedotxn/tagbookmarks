@@ -15,7 +15,8 @@
     "jsx": "preserve",
     "incremental": true,
     "typeRoots": ["./types/next-auth.d.ts", "node_modules/@types"],
-    "types": ["jest", "node"]
+    "types": ["jest", "node"],
+    "useUnknownInCatchVariables": false
   },
   "include": [
     "next-env.d.ts",

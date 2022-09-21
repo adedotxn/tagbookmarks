@@ -173,13 +173,35 @@ const useStyles = createStyles((theme, _params, getRef) => ({
     },
   },
 }));
+
+function SearchButton({
+  initiateSearch,
+  startSearch,
+  noOfBookmarks,
+  fetchStatus,
+}: {
+  initiateSearch: () => void;
+  noOfBookmarks: number;
+  startSearch: boolean;
+  fetchStatus: "fetching" | "idle" | "paused";
+}): JSX.Element {
+  return (
+    <Button onClick={initiateSearch}>
+      {fetchStatus === "fetching" && startSearch ? (
+        <Loader color="white" size={20} mr={20} />
+      ) : (
+        ""
+      )}
+      Get {noOfBookmarks} Bookmarks
+    </Button>
+  );
+}
+
 const Load = () => {
   const { classes } = useStyles();
   const { data: session } = useSession();
   const [noOfBookmarks, setNumberOfBookmarks] = useState<number>(2);
   const [errorMessage, setErrorMessage] = useState("");
-
-  console.log("session", session);
 
   const validate = (number: number) => {
     if (number === 0 || (number > 1 && number <= 50)) {
@@ -193,12 +215,12 @@ const Load = () => {
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNumberOfBookmarks(parseInt(e.target.value));
+    validate(noOfBookmarks);
   };
 
-  useEffect(() => {
-    validate(noOfBookmarks);
-    console.log("type of number", typeof noOfBookmarks);
-  }, [noOfBookmarks]);
+  // useEffect(() => {
+  //   validate(noOfBookmarks);
+  // }, [noOfBookmarks]);
 
   // const [bookmarks, setBookmarks] = useState([]);
   const [startSearch, setStartSearch] = useState(false);
@@ -214,35 +236,40 @@ const Load = () => {
   } = useQuery(
     ["Bookmarks", noOfBookmarks],
     async () => {
-      const fetch = await apiClient.get(`/twitter/${noOfBookmarks}`);
+      const fetch = await apiClient.get(`/bookmarks/${noOfBookmarks}`);
       console.log("fetch.data -- ", fetch.data);
       return fetch.data;
     },
     {
-      enabled: !!startSearch,
+      retry: 10,
+      enabled: startSearch,
     }
   );
 
   const { activeBookmarks, setActiveBookmarks } = useActiveBookmarks();
 
-  useEffect(() => {
-    !isLoading &&
-      !isFetching &&
-      console.log("returneddd in effect", returnedBookmarks);
+  !isLoading &&
+    !isFetching &&
+    console.log("returneddd in effect", returnedBookmarks);
 
+  useEffect(() => {
     !isLoading &&
       !isFetching &&
       returnedBookmarks !== undefined &&
       setActiveBookmarks(returnedBookmarks.data);
 
-    !isLoading && !isFetching && returnedBookmarks
-      ? console.log("yasss")
-      : console.log("naurrrr");
-  }, [isFetching, isLoading, returnedBookmarks, activeBookmarks]);
+    // returnedBookmarks ? setStartSearch(false) : setStartSearch(true);
+  }, [
+    isFetching,
+    isLoading,
+    returnedBookmarks,
+    activeBookmarks,
+    setActiveBookmarks,
+  ]);
 
   const initiateSearch = () => {
-    if (noOfBookmarks === undefined) {
-      return alert("no Of bookmarks is undefined, ");
+    if (noOfBookmarks === (undefined || NaN)) {
+      return alert("no Of bookmarks is undefined or is not a valid number, ");
     }
     setStartSearch(true);
   };
@@ -319,12 +346,16 @@ const Load = () => {
                 />
               </Input.Wrapper>
 
-              <Button onClick={initiateSearch}>
-                {fetchStatus === "fetching" && (
-                  <Loader color="white" size={20} mr={20} />
-                )}
+              {/* <Button onClick={initiateSearch}>
+                {startSearch && <Loader color="white" size={20} mr={20} />}
                 Get {noOfBookmarks} Bookmarks
-              </Button>
+              </Button> */}
+              <SearchButton
+                initiateSearch={initiateSearch}
+                noOfBookmarks={noOfBookmarks}
+                startSearch={startSearch}
+                fetchStatus={fetchStatus}
+              />
             </div>
 
             <div className={classes.defaults}>
@@ -337,7 +368,7 @@ const Load = () => {
                   </>
                 ) : (
                   <>
-                    {fetchStatus === "fetching" ? (
+                    {startSearch ? (
                       <Button style={{ display: "grid", placeItems: "center" }}>
                         <Loader color="white" size={20} mr={20} />
                       </Button>

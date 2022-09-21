@@ -11,7 +11,7 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         url: "https://twitter.com/i/oauth2/authorize",
         params: {
-          scope: "tweet.read users.read bookmark.read",
+          scope: "tweet.read users.read bookmark.read offline.access",
         },
       },
       // token : {
@@ -46,12 +46,10 @@ export const authOptions: NextAuthOptions = {
         token["twitter"].userId = user?.id;
       }
 
-      console.log(account?.refresh_token ? true : false);
-      console.log("at callback", token);
-
       return token;
     },
-    async session({ session, user, token }) {
+    // attaching the userID to session
+    async session({ session, token }) {
       session["user"].id = token.twitter.userId;
       return session;
     },

@@ -1,12 +1,17 @@
 import { model, models, Schema } from "mongoose";
+import { CollectionInterface } from "../../utils/collection.interface";
 
-const CollectionSchema = new Schema({
-  tweetId: {
+const CollectionSchema = new Schema<CollectionInterface>({
+  userId: {
     type: String,
+    ref: "User",
     unique: true,
     required: true,
   },
-
+  tweetId: {
+    type: String,
+    required: true,
+  },
   tags: {
     type: [String],
     default: [],
