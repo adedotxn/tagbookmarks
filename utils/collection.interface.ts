@@ -1,5 +1,5 @@
 export interface CollectionInterface {
-  userId: string;
+  tweepId: string;
   tweetId: string;
   tags: string[];
   time?: string;

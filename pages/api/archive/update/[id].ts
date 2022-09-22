@@ -8,7 +8,9 @@ export default async function handler(
   res: NextApiResponse
 ) {
   try {
-    console.log("Connecting to DB");
+    /**
+     * Use this when they click on edit tags on a tweet, to add a new tag to it?
+     */
     await connect();
     console.log("Connected to DB");
 

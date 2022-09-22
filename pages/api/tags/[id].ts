@@ -7,13 +7,18 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
+  /**
+   * Returns collection of a user's tagged tweets
+   */
   try {
-    const { id } = req.query;
-    console.log("Connecting to DB");
+    const { id: tweepId } = req.query;
     await connect();
-    console.log("Connected to DB");
+    console.log(`/tags/${tweepId}`);
 
-    const data = await Collection.find({ tweetId: `${id}` }).sort({ time: -1 });
+    const data = await Collection.find({ tweepId }).sort({
+      time: -1,
+    });
+    console.log("data", data);
 
     res.json(data);
 

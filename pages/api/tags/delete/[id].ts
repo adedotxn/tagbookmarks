@@ -11,24 +11,36 @@ export default async function handler(
    * Delete tags from specific tweets
    */
   try {
-    console.log("Connecting to DB");
     await connect();
     console.log("Connected to DB");
 
-    const { tag, id: dataId } = req.body;
-    const { id } = req.query;
+    const { tag, tweetId } = req.body;
+    const { id: tweepId } = req.query;
 
-    const data = await Collection.findById(id);
+    const collection = await Collection.find({
+      tweepId,
+      tweetId,
+    });
 
-    if (data.tags.includes(tag)) {
-      data.tags.splice(data.tags.indexOf(tag), 1);
-      data.save();
+    if (collection.length !== 0) {
+      console.log("Found", collection);
+      if (collection[0].tags.includes(tag)) {
+        collection[0].tags.splice(collection[0].tags.indexOf(tag), 1);
+        collection[0].save();
 
-      res.status(200).json({ status: "Removed", data: data });
+        return res
+          .status(200)
+          .json({ status: "Removed", collection: collection });
+      } else {
+        return res.status(200).json({
+          status: `Tweet does not conatin tag : ${tag}`,
+          collection: collection,
+        });
+      }
     } else {
-      res
-        .status(200)
-        .json({ status: `Tweet does not conatin tag : ${tag}`, data: data });
+      return res.status(404).json({
+        message: `No tagged tweet '${tweetId}' for user '${tweepId}' found`,
+      });
     }
   } catch (error) {
     res.json(error);

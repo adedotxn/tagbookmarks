@@ -11,13 +11,20 @@ export default async function handler(
    * Getting user and their tags, to display as tags they can choose from
    */
   try {
-    const { id } = req.query; //twitterID used as userID in create user
+    const { id: tweepId } = req.query; //twitterID used as userID in create user
     await connect();
     console.log(".user/[id]");
 
-    const data = await User.find({ userId: `${id}` });
+    const data = await User.find({ tweepId });
 
-    return res.status(200).json(data);
+    if (data.length !== 0) {
+      return res.status(200).json({ data });
+    } else {
+      return res.json({
+        data: [],
+        message: `User "${tweepId}"  has not created any tags`,
+      });
+    }
   } catch (error) {
     return res
       .status(404)

@@ -2,7 +2,7 @@ import { model, models, Schema } from "mongoose";
 import { CollectionInterface } from "../../utils/collection.interface";
 
 const CollectionSchema = new Schema<CollectionInterface>({
-  userId: {
+  tweepId: {
     type: String,
     ref: "User",
     unique: true,

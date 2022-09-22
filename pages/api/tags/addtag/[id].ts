@@ -4,6 +4,7 @@ import connect from "../../../../db/connect";
 import Collection from "../../../../db/models/collection";
 import User from "../../../../db/models/user";
 import { CollectionInterface } from "../../../../utils/collection.interface";
+import { UserInterface } from "../../../../utils/user.interface";
 
 export default async function handler(
   req: NextApiRequest,
@@ -12,43 +13,75 @@ export default async function handler(
   try {
     /**
      * Add tags to specific tweetId
+     * Checks if tags are part of the tags already created by the user, if they are not, add to them
+     * Agin check if there's already a collection by the user with the tweetID
+     * If there is not, create the collection with the tweetId and add it's tags to it
+     * If there is already a collection by the user with that tweetId, simply update the tags
+     *
      */
     await connect();
     console.log("tags/add");
 
-    const { userID, tag } = req.body;
-    // const { id }: { id: string } = req.query;
-    const tweetID = req.query.id as string;
+    const tweetId: string = req.body.tweetId;
+    const tag = req.body.tag;
 
-    const findUser = await User.find({ userId: `${userID}` });
-    if (findUser.length === 0) {
-      return res.status(404).send({ found: findUser });
+    const tweepId = req.query.id as string;
+
+    const userExists: UserInterface[] = await User.find({ tweepId });
+    if (userExists.length === 0) {
+      return res
+        .status(404)
+        .send({ found: userExists, message: "Create at least one tag first" });
     }
 
-    // Assuming I'd want to create a new tag if the tag does not already exist but i won't because the user will only be picking tags from their created tags
-    // for (let i = 0; i < findUser.userTags.length; i++) {
-    //   if (!findUser.userTags.includes(tag[i])) {
-    //     findUser.userTags = [].concat(...[...findUser.userTags, tag[i]]);
-    //     findUser.save();
-    //   }
-    // }
+    if (userExists[0].userTags !== undefined) {
+      const temp: string[] = [].concat(...[...userExists[0].userTags, tag]);
+      const tagUpdates = [...new Set(temp)];
+      await User.updateOne(
+        { tweepId },
+        {
+          userTags: tagUpdates,
+        }
+      );
+    }
 
-    const saveTagged = new Collection<CollectionInterface>({
-      userId: userID,
-      tweetId: tweetID,
-      tags: tag,
+    const collectionExists = await Collection.find({
+      tweepId,
+      tweetId,
     });
 
-    console.log("returned", req.body);
-    const saved = await saveTagged.save();
+    if (collectionExists.length === 0) {
+      console.log("nu collection", collectionExists);
+      const saveTag = new Collection<CollectionInterface>({
+        tweepId,
+        tweetId: tweetId,
+        tags: tag,
+      });
 
-    res.json({
-      status: "Success",
-      data: findUser,
-    });
+      const saved = await saveTag.save();
 
-    res.status(200);
+      return res.status(200).json({
+        status: "Success created collection and added tags",
+        data: saved,
+      });
+    } else {
+      const temp = [].concat(...[...collectionExists[0].tags, tag]);
+      const update = [...new Set(temp)];
+      const updatedTags = await Collection.updateOne(
+        { tweetId },
+        {
+          tags: update,
+        }
+      );
+
+      return res.status(200).json({
+        status: "Successfuly Updated Tags",
+        data: updatedTags,
+      });
+    }
   } catch (error) {
-    res.json(error);
+    return res
+      .status(404)
+      .json({ error, message: "Error updating, check tag format" });
   }
 }

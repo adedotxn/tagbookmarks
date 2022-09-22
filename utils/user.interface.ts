@@ -1,4 +1,4 @@
 export interface UserInterface {
-  userId: string;
+  tweepId: string;
   userTags?: string[];
 }

@@ -2,7 +2,7 @@ import { model, models, Schema } from "mongoose";
 import { UserInterface } from "../../utils/user.interface";
 
 const UserSchema = new Schema<UserInterface>({
-  userId: {
+  tweepId: {
     type: String,
     unique: true,
     required: true,
