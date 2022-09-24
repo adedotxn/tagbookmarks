@@ -1,12 +1,12 @@
 export interface BookMarkInterface {
-  text: string;
-  id: string;
-  created_at: string;
-  attachment: {
-    media_keys: string[];
-  };
   name: string;
   username: string;
+  attachments: {
+    media_keys: string[];
+  };
+  created_at: string;
+  id: string;
+  text: string;
   author_id: string;
 }
 

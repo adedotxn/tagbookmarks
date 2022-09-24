@@ -74,3 +74,17 @@ const session2 = {
 session2["user"].id = "askaskj";
 
 console.log(session2);
+
+const data = (labely = ["funny", "guyyy"]);
+
+console.log(labely);
+console.log(data);
+
+const dl = data.map((e, idx) => {
+  return {
+    value: e,
+    label: e,
+  };
+});
+
+console.log(dl);

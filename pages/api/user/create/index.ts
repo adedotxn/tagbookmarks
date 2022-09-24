@@ -14,7 +14,7 @@ export default async function handler(
    * If user does not exist, create user and add their tags
    * If user already exists, just update their tags with the new ones
    */
-  const { tweepId, tag: userTags } = req.body;
+  const { tweepId, userTags } = req.body;
   try {
     await connect();
     console.log("/create/index");

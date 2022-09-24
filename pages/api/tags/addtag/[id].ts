@@ -23,7 +23,7 @@ export default async function handler(
     console.log("tags/add");
 
     const tweetId: string = req.body.tweetId;
-    const tag = req.body.tag;
+    const tag = req.body.tags;
 
     const tweepId = req.query.id as string;
 
