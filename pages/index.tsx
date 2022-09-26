@@ -220,7 +220,14 @@ const Load = () => {
 
             <div className={classes.view_tagged}>
               <Title order={4}>Already have some bookmarks tagged?</Title>
-              <Button variant="default" color="gray" compact>
+              <Button
+                variant="default"
+                component="a"
+                color="gray"
+                href="/tagged"
+                target="_blank"
+                compact
+              >
                 Go view tagged bookmark-tweets
               </Button>
             </div>

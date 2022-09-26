@@ -33,7 +33,7 @@ export default async function handler(
       });
     });
 
-    return res.status(200).json({ tags: tagsArray });
+    return res.status(200).json({ tweetId, tags: tagsArray });
   } catch (error) {
     return res.status(404).json(error);
   }

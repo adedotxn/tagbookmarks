@@ -21,12 +21,10 @@ const BookmarksPageHeader = () => {
         <div className={classes.avi}>
           {matches ? (
             <Button
-              // mt={20}
-              component="a"
-              target="_blank"
-              variant="default"
               color="gray"
+              variant="default"
               compact
+              onClick={() => router.push("/tagged")}
             >
               View tagged bookmark-tweets
             </Button>
@@ -83,9 +81,7 @@ const BookmarksPageHeader = () => {
         {matches && (
           <div>
             <Button
-              // mt={20}
-              component="a"
-              target="_blank"
+              onClick={() => router.push("/")}
               variant="default"
               color="gray"
               compact

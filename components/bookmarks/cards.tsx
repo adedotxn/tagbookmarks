@@ -139,6 +139,8 @@ const BookmarkCards = ({ data, tags, search }: BookmarkCardInteface) => {
                       tweetId={data.id}
                     />
                   )}
+
+                  {router.pathname.includes("tagged") && <></>}
                 </Card.Section>
               </Card>
 
