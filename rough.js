@@ -88,3 +88,40 @@ const dl = data.map((e, idx) => {
 });
 
 console.log(dl);
+
+const adaa = [
+  {
+    _id: "6331c19b9db913d2bef079a0",
+    tweepId: "1248913910557822976",
+    tweetId: "1573747382747029504",
+    tags: ["important", "funny", "relatable"],
+    time: "1664204985369",
+    __v: 0,
+  },
+];
+
+const tagsArray = [];
+adaa.map((e) => {
+  e.tags.map((tags) => {
+    tagsArray.push(tags);
+  });
+});
+
+console.log(tagsArray);
+
+const rettt = {
+  tags: ["important", "funny", "relatable"],
+};
+
+console.log(
+  rettt.tags.map((e) => {
+    return e;
+  })
+);
+
+let tagsss = ["important", "funny", "relatable"];
+console.log(tagsss[0]);
+
+tagsss.map((e) => {
+  console.log(e);
+});

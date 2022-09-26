@@ -19,6 +19,8 @@ export default async function handler(
     await connect();
     console.log("/create/index");
 
+    console.log({ user: tweepId, userTags });
+
     const userExists = await User.find({ tweepId });
 
     if (userExists.length >= 1) {

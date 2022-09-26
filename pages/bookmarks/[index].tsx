@@ -51,6 +51,7 @@ const Bookmarks = () => {
       return filtered;
     });
 
+  //TODO : Turn the above into just one utility function
   console.log("allusertasg", allUserTags);
 
   if (session) {

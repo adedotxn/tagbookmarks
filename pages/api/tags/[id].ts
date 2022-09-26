@@ -20,10 +20,8 @@ export default async function handler(
     });
     console.log("data", data);
 
-    res.json(data);
-
-    res.status(200);
+    return res.status(200).json(data);
   } catch (error) {
-    res.json(error);
+    return res.json(error);
   }
 }

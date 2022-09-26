@@ -3,10 +3,12 @@ import { useDebouncedValue } from "@mantine/hooks";
 import { IconBrandTwitter } from "@tabler/icons";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
-import { useAddTag } from "../../utils/api/hooks/tweet_tag";
+import { useAddTag } from "../../utils/api/hooks/tag_tweet";
 import { BookMarkInterface } from "../../utils/interface";
 import { bookmarkPageStyle } from "../styles/style";
+import TagBadge from "./tags";
 
 export interface BookmarkCardInteface {
   data: BookMarkInterface[];
@@ -23,6 +25,7 @@ export interface DataInterface {
 const BookmarkCards = ({ data, tags, search }: BookmarkCardInteface) => {
   const [debounced] = useDebouncedValue(search, 200);
   const { classes } = bookmarkPageStyle();
+  const router = useRouter();
   const [tagId, setTagId] = useState("");
   const [value, setValue] = useState<string[]>([]);
 
@@ -30,8 +33,8 @@ const BookmarkCards = ({ data, tags, search }: BookmarkCardInteface) => {
     setTagId(id);
   };
 
-  console.log("taggs", tags[0]);
-  console.log("value", value);
+  // console.log("taggs", tags[0]);
+  // console.log("value", value);
 
   const dataForMultiSelect = Array.isArray(tags[0])
     ? tags[0].map((e) => {
@@ -129,21 +132,13 @@ const BookmarkCards = ({ data, tags, search }: BookmarkCardInteface) => {
                     </Button>
                   </Group>
 
-                  {/* {tags !== undefined &&
-                    tags.map((e, index) => {
-                      return (
-                        <Badge
-                          key={index}
-                          mt={15}
-                          ml={6}
-                          radius="sm"
-                          color="pink"
-                          variant="light"
-                        >
-                          {e}
-                        </Badge>
-                      );
-                    })} */}
+                  {router.pathname.includes("bookmarks") && (
+                    <TagBadge
+                      key={data.id}
+                      tweepId={userId}
+                      tweetId={data.id}
+                    />
+                  )}
                 </Card.Section>
               </Card>
 

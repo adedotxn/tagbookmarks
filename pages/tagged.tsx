@@ -37,6 +37,7 @@ const Bookmarks = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const { activeBookmarks } = useActiveBookmarks();
+  const allUserTags: string[] = ["Funny", "Wild"];
 
   return (
     <div className={classes.wrapper}>
@@ -65,7 +66,7 @@ const Bookmarks = () => {
         {mockdata.length === 0 ? (
           <EmptyBookmarks />
         ) : (
-          <BookmarkCards data={mockdata} tags={tags} search={search} />
+          <BookmarkCards data={mockdata} tags={allUserTags} search={search} />
         )}
       </main>
     </div>

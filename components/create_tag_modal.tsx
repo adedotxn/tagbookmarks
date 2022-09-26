@@ -27,14 +27,14 @@ const CreateTagModal = ({
 
   const onTagClose = (): any => {
     setOpenModal(false);
-    const toSave = tags.map((e) => e.value);
-    console.log("value", toSave);
+    // const toSave = [...value];
+    // console.log("value to add", toSave);
 
     createMutation.mutate({
       tweepId: userId,
-      userTags: toSave,
+      userTags: value,
     });
-    console.log("done"), { toSave, userId };
+    console.log("done"), { value, userId };
   };
   return (
     <Modal

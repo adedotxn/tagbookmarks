@@ -14,10 +14,8 @@ export default async function handler(
 
     const data = await Collection.find().sort({ time: -1 });
 
-    res.json(data);
-
-    res.status(200);
+    return res.status(200).json(data);
   } catch (error) {
-    res.json(error);
+    return res.json(error);
   }
 }
