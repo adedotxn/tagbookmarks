@@ -1,18 +1,17 @@
-import { Button, Card, Group, Modal, MultiSelect, Text } from "@mantine/core";
+import { Button, Card, Group, Text } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconBrandTwitter } from "@tabler/icons";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useAddTag } from "../../utils/api/hooks/tag_tweet";
 import { BookMarkInterface } from "../../utils/interface";
+import AddtagModal from "../modal/addtag";
 import { bookmarkPageStyle } from "../styles/style";
 import TagBadge from "./tags";
 
 export interface BookmarkCardInteface {
   data: BookMarkInterface[];
-  tags: string[];
   search: string;
   handleTagModal?: () => void;
 }
@@ -22,42 +21,17 @@ export interface DataInterface {
   label: string;
 }
 
-const BookmarkCards = ({ data, tags, search }: BookmarkCardInteface) => {
+const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
   const [debounced] = useDebouncedValue(search, 200);
   const { classes } = bookmarkPageStyle();
   const router = useRouter();
   const [tagId, setTagId] = useState("");
-  const [value, setValue] = useState<string[]>([]);
 
   const handleTagModal = (id: string) => {
     setTagId(id);
   };
-
-  // console.log("taggs", tags[0]);
-  // console.log("value", value);
-
-  const dataForMultiSelect = Array.isArray(tags[0])
-    ? tags[0].map((e) => {
-        return {
-          value: e,
-          label: e,
-        };
-      })
-    : [];
-
   const { data: session } = useSession();
   const userId: string = session?.user?.id;
-  const addTagMutation = useAddTag();
-
-  const onTagClose = (id: string) => {
-    setTagId("shagabum");
-
-    addTagMutation.mutate({
-      tweepId: userId,
-      tweetId: id,
-      tags: value,
-    });
-  };
 
   return (
     <>
@@ -77,7 +51,7 @@ const BookmarkCards = ({ data, tags, search }: BookmarkCardInteface) => {
           const tweetLink = data.text.slice(-24);
           const tweet = data.text;
           return (
-            <div key={data.id}>
+            <div key={`${data.id}${Math.random()}`}>
               <Card
                 className={classes.cards}
                 shadow="sm"
@@ -147,27 +121,12 @@ const BookmarkCards = ({ data, tags, search }: BookmarkCardInteface) => {
               {/* <TwitterTweetEmbed tweetId={data.id} /> */}
               {/* <TweetEmbed tweetId={data.id} /> */}
 
-              <Modal
-                opened={tagId === data.id}
-                onClose={() => setTagId("shagabum")}
-                title="Select a tag"
-              >
-                <MultiSelect
-                  value={value}
-                  onChange={setValue}
-                  data={dataForMultiSelect}
-                  label="Select tag to add"
-                />
-
-                <Group position="center">
-                  <Button //*the data.id is the tweet id
-                    onClick={() => onTagClose(data.id)}
-                    variant="default"
-                  >
-                    Add Tag
-                  </Button>
-                </Group>
-              </Modal>
+              <AddtagModal
+                userId={userId}
+                tagId={tagId}
+                dataId={data.id}
+                setTagId={setTagId}
+              />
             </div>
           );
         })}

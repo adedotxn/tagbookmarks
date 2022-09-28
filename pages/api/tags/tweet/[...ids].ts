@@ -12,11 +12,12 @@ export default async function handler(
    * Returns the tags for a specific tweet
    */
   try {
+    await connect();
+
     const ids = req.query.ids as string[];
     const tweepId = ids[0];
     const tweetId = ids[1];
 
-    await connect();
     console.log(`/tags/${tweepId}`);
 
     const data: CollectionInterface[] = await Collection.find({

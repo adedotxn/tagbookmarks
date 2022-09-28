@@ -6,7 +6,6 @@ import BookmarksPageHeader from "../../components/bookmarks/header";
 import CreateTagModal from "../../components/create_tag_modal";
 import SearchAndCreate from "../../components/search_and_create";
 import { bookmarkPageStyle } from "../../components/styles/style";
-import { useDataGetter } from "../../utils/api/api-hooks";
 import { useActiveBookmarks } from "../../utils/context";
 
 interface tagInterface {
@@ -33,26 +32,6 @@ const Bookmarks = () => {
 
   const { activeBookmarks } = useActiveBookmarks();
   const userId: string = session?.user?.id;
-
-  // get all the tags associated with a user
-  function useTags() {
-    const { isLoading, error, data } = useDataGetter(userId);
-    const returned = data?.data?.data;
-    return { returned, error, isLoading };
-  }
-  const useTagReturns = useTags();
-  const retTags = useTagReturns.returned;
-  const allUserTags: string[] =
-    retTags !== undefined &&
-    retTags.map((items: { userTags: string[] }) => {
-      const filtered =
-        items.userTags !== undefined &&
-        items.userTags.filter((item) => item !== null || undefined);
-      return filtered;
-    });
-
-  //TODO : Turn the above into just one utility function
-  console.log("allusertasg", allUserTags);
 
   if (session) {
     return (
@@ -82,11 +61,7 @@ const Bookmarks = () => {
           {activeBookmarks.length === 0 ? (
             <EmptyBookmarks />
           ) : (
-            <BookmarkCards
-              data={activeBookmarks}
-              tags={allUserTags}
-              search={search}
-            />
+            <BookmarkCards data={activeBookmarks} search={search} />
           )}
         </main>
       </div>

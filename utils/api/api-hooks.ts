@@ -32,6 +32,7 @@ export const useCreate = () => {
   return useMutation(createEndpoint, {
     onSuccess: () => {
       queryClient.invalidateQueries(["tags"]);
+      queryClient.invalidateQueries(["alltags"]);
     },
     onSettled: (error, variable, context) => {
       console.log("settled? error", { context });

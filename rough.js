@@ -310,3 +310,31 @@ console.log(res);
 //     id: tweet.id,
 //     created_at: tweet.created_at,
 //     attachments: tweet.attachments,
+
+const alltags = [
+  [
+    null,
+    "important",
+    "funny",
+    "relatable",
+    "Test",
+    "H",
+    "A",
+    "Create Tag Works",
+    "ina",
+  ],
+];
+
+console.log(alltags[0]);
+const filtered = alltags[0].filter((item) => item !== null || undefined);
+const dataForMultiSelect = Array.isArray(filtered)
+  ? filtered.map((e) => {
+      return {
+        value: e,
+        label: e,
+      };
+    })
+  : [];
+
+console.log(filtered);
+console.log(dataForMultiSelect);

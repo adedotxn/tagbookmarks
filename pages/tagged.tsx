@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import EmptyBookmarks from "../components/bookmarks/empty";
 import BookmarksPageHeader from "../components/bookmarks/header";
 import CreateTagModal from "../components/create_tag_modal";
+import AddtagModal from "../components/modal/addtag";
 import SearchAndCreate from "../components/search_and_create";
 import { bookmarkPageStyle } from "../components/styles/style";
 import { useTaggedGetter } from "../utils/api/hooks/alltagged";
@@ -46,13 +47,12 @@ const Bookmarks = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const { activeBookmarks } = useActiveBookmarks();
-  const allUserTags: string[] = ["Funny", "Wild"];
 
   const userId = session !== undefined && session?.user.id;
 
   const { data: all, error, status, isLoading } = useTaggedGetter(userId);
   const userData = all?.data;
-  console.log("all", userData);
+  // console.log("all", userData);
 
   const [allSaved, setAllSaved] = useState<savedInterface[]>([]);
 
@@ -64,7 +64,12 @@ const Bookmarks = () => {
     }
   }, [all, userData]);
 
-  console.log(allSaved);
+  const [tagId, setTagId] = useState("");
+  const handleTagModal = (id: string) => {
+    setTagId(id);
+  };
+
+  // console.log("allSaved", allSaved);
 
   return (
     <div className={classes.wrapper}>
@@ -73,13 +78,17 @@ const Bookmarks = () => {
       </>
 
       <section>
-        <SearchAndCreate
-          length={allSaved.length}
-          info={`Tagged: ${allSaved.length} tweets`}
-          search={search}
-          setSearch={setSearch}
-          setOpenModal={setOpenModal}
-        />
+        {allSaved === undefined ? (
+          <div>Loading....</div>
+        ) : (
+          <SearchAndCreate
+            length={allSaved.length}
+            info={`Tagged: ${allSaved.length} tweets`}
+            search={search}
+            setSearch={setSearch}
+            setOpenModal={setOpenModal}
+          />
+        )}
 
         <CreateTagModal
           openModal={openModal}
@@ -98,7 +107,7 @@ const Bookmarks = () => {
               const tweetLink = data.text.slice(-24);
               const tweet = data.text;
               return (
-                <div key={data.id}>
+                <div key={`${data.id}${Math.random()}`}>
                   <Card
                     className={classes.cards}
                     shadow="sm"
@@ -141,8 +150,7 @@ const Bookmarks = () => {
                         >
                           Go to Tweet
                         </Button>
-
-                        {/* <Button
+                        <Button
                           variant="light"
                           onClick={() => handleTagModal(data.id)}
                           color="blue"
@@ -150,25 +158,32 @@ const Bookmarks = () => {
                           compact
                         >
                           Add tag
-                        </Button> */}
+                        </Button>
+                      </Group>
 
+                      <AddtagModal
+                        userId={userId}
+                        tagId={tagId}
+                        dataId={data.id}
+                        setTagId={setTagId}
+                      />
+
+                      <section className={classes.badge}>
                         {data.tags.map((e: string) => {
                           return (
-                            <Group key={data.id}>
-                              <Badge
-                                key={data.id}
-                                mt={15}
-                                ml={6}
-                                radius="sm"
-                                color="pink"
-                                variant="light"
-                              >
-                                {e}
-                              </Badge>
-                            </Group>
+                            <Badge
+                              key={data.id}
+                              mt={15}
+                              ml={6}
+                              radius="sm"
+                              color="pink"
+                              variant="light"
+                            >
+                              {e}
+                            </Badge>
                           );
                         })}
-                      </Group>
+                      </section>
                     </Card.Section>
                   </Card>
 
@@ -177,22 +192,6 @@ const Bookmarks = () => {
                 </div>
               );
             })}
-            {/* {allSaved.map((e, index) => {
-              return e.tags.map((tag) => {
-                return (
-                  <Badge
-                    key={index}
-                    mt={15}
-                    ml={6}
-                    radius="sm"
-                    color="pink"
-                    variant="light"
-                  >
-                    {tag}
-                  </Badge>
-                );
-              });
-            })} */}
           </>
         )}
       </main>

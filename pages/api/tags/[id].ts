@@ -48,14 +48,10 @@ export default async function handler(
         return e?.author_id!;
       });
 
-      console.log("dem tweets", alltweets);
-      console.log("dem ids", userids);
-
       const allUsers =
         userids === undefined
           ? { data: [{ id: "", name: "", username: "" }] }
           : await readOnlyClient.v2.users(userids);
-      console.log("usernames with dem", allUsers);
 
       const returned = alltweets.data.map((tweet, idx) => {
         return {

@@ -1,6 +1,7 @@
 import { Box, Burger, Button, Drawer, NavLink } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { IconBrandTwitter, IconHome, IconTag } from "@tabler/icons";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -14,7 +15,7 @@ const BookmarksPageHeader = () => {
   const [openedDrawer, setOpenedDrawer] = useState(false);
   const router = useRouter();
   const burgerTitle = openedDrawer ? "Close Sidebar" : "Open Sidebar";
-
+  const { data: session } = useSession();
   return (
     <>
       <header className={classes.header}>
@@ -54,7 +55,7 @@ const BookmarksPageHeader = () => {
                   active={router.pathname === "/"}
                 />
               </Link>
-              <Link href={`bookmarks${router.query}`} passHref>
+              <Link href={`bookmarks/${session?.user?.name}`} passHref>
                 <NavLink
                   icon={<IconBrandTwitter />}
                   variant="light"

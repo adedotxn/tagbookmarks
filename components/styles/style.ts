@@ -122,4 +122,15 @@ export const bookmarkPageStyle = createStyles((theme, _params, getRef) => ({
     placeItems: "center",
     height: "70vh",
   },
+
+  badge: {
+    display: "grid",
+    gridTemplateColumns: "repeat(2, 1fr)",
+    // placeItems: "center",
+    alignItems: "center",
+
+    div: {
+      width: "fit-content",
+    },
+  },
 }));
