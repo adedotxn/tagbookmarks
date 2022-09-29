@@ -338,3 +338,20 @@ const dataForMultiSelect = Array.isArray(filtered)
 
 console.log(filtered);
 console.log(dataForMultiSelect);
+
+const mockArray = [
+  {
+    tweepId: "tweep",
+    tweetId: "tweet",
+  },
+];
+
+console.log(mockArray);
+
+mockArray.map((e) => {
+  console.log(e.tweepId);
+});
+
+const arr = ["FUNNY", "assas", "Pop", "Asa"];
+console.log(arr.includes());
+console.log();

@@ -9,6 +9,7 @@ export interface SearchAndCreateInterface {
   search: string;
   setSearch: React.Dispatch<React.SetStateAction<string>>;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
+  placeholder: string;
 }
 
 const SearchAndCreate = ({
@@ -17,6 +18,7 @@ const SearchAndCreate = ({
   search,
   setSearch,
   setOpenModal,
+  placeholder,
 }: SearchAndCreateInterface) => {
   const { classes } = bookmarkPageStyle();
 
@@ -31,7 +33,7 @@ const SearchAndCreate = ({
             <Input
               icon={<IconSearch />}
               variant="filled"
-              placeholder="Search through tagged"
+              placeholder={placeholder}
               value={search}
               onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 setSearch(e.target.value)

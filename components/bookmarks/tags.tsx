@@ -1,27 +1,35 @@
 import { Badge } from "@mantine/core";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import apiClient from "../../utils/api/http-config";
 
 interface TagBadgeInterface {
   tweepId: string;
   tweetId: string;
 }
-const TagBadge = ({ tweepId, tweetId }: TagBadgeInterface) => {
-  const {
-    isLoading,
-    status,
-    fetchStatus,
-    data: returned,
-  } = useQuery(
-    ["badgeTags", tweepId, tweepId],
-    async () => {
-      const fetch = await apiClient.get(`/tags/tweet/${tweepId}/${tweetId}`);
-      return fetch.data;
-    },
+const TagBadge = ({ tweepId, tweetId }: TagBadgeInterface): JSX.Element => {
+  const mockArray = [
     {
-      enabled: !!tweepId && !!tweetId,
-    }
-  );
+      twpId: tweepId,
+      twtId: tweetId,
+    },
+  ];
+
+  const tagQueries = useQueries({
+    queries: mockArray.map((user) => {
+      return {
+        queryKey: ["badgeTags", user.twpId, user.twtId],
+        queryFn: async () => {
+          const fetch = await apiClient.get(
+            `/tags/tweet/${user.twpId}/${user.twtId}`
+          );
+          return fetch.data;
+        },
+      };
+    }),
+  });
+
+  let isLoading = tagQueries[0]?.isLoading;
+  const returned = tagQueries[0]?.data;
   const data = returned?.tags;
 
   if (isLoading) {
@@ -31,7 +39,6 @@ const TagBadge = ({ tweepId, tweetId }: TagBadgeInterface) => {
       </div>
     );
   }
-
   if (data !== undefined && data.length !== 0) {
     return (
       <>

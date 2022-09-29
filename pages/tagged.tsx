@@ -1,4 +1,5 @@
 import { Badge, Button, Card, Group, Text } from "@mantine/core";
+import { useDebouncedValue } from "@mantine/hooks";
 import { IconBrandTwitter } from "@tabler/icons";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -43,6 +44,7 @@ const Bookmarks = () => {
   // };
 
   const [search, setSearch] = useState<string>("");
+  const [debounced] = useDebouncedValue(search, 200);
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -87,6 +89,7 @@ const Bookmarks = () => {
             search={search}
             setSearch={setSearch}
             setOpenModal={setOpenModal}
+            placeholder="Search through tagged with username/tags"
           />
         )}
 
@@ -103,95 +106,109 @@ const Bookmarks = () => {
           <EmptyBookmarks />
         ) : (
           <>
-            {allSaved.map((data) => {
-              const tweetLink = data.text.slice(-24);
-              const tweet = data.text;
-              return (
-                <div key={`${data.id}${Math.random()}`}>
-                  <Card
-                    className={classes.cards}
-                    shadow="sm"
-                    //   p="lg"
-                    radius="md"
-                    mt={40}
-                    withBorder
-                  >
-                    <Card.Section className={classes.card_section}>
-                      <Group>
-                        <Link href={`https://twitter.com/${data.username}`}>
-                          <a target="blank">
-                            <Text className={classes.username} weight={800}>
-                              @{data.username}
-                            </Text>
-                          </a>
-                        </Link>
-                      </Group>
+            {allSaved
+              .filter((data) => {
+                if (debounced === "") {
+                  return data;
+                } else if (
+                  data.text.toLowerCase().includes(debounced.toLowerCase()) ||
+                  data.username
+                    .toLowerCase()
+                    .includes(debounced.toLowerCase()) ||
+                  data.tags.includes(`${debounced}`)
+                ) {
+                  return data;
+                }
+              })
+              ?.map((data) => {
+                const tweetLink = data.text.slice(-24);
+                const tweet = data.text;
+                return (
+                  <div key={`${data.id}${Math.random()}`}>
+                    <Card
+                      className={classes.cards}
+                      shadow="sm"
+                      //   p="lg"
+                      radius="md"
+                      mt={40}
+                      withBorder
+                    >
+                      <Card.Section className={classes.card_section}>
+                        <Group>
+                          <Link href={`https://twitter.com/${data.username}`}>
+                            <a target="blank">
+                              <Text className={classes.username} weight={800}>
+                                @{data.username}
+                              </Text>
+                            </a>
+                          </Link>
+                        </Group>
 
-                      <Text mt={5} weight={500} size="sm">
-                        {tweet}
-                      </Text>
+                        <Text mt={5} weight={500} size="sm">
+                          {tweet}
+                        </Text>
 
-                      {/* <TwitterTweetEmbed
+                        {/* <TwitterTweetEmbed
                           options={{ height: 200, theme: "dark" }}
                           tweetId={data.id}
                         /> */}
 
-                      <Group position="center" className={classes.card_btns}>
-                        <Button
-                          leftIcon={<IconBrandTwitter />}
-                          component="a"
-                          href={tweetLink}
-                          target="_blank"
-                          variant="light"
-                          color="blue"
-                          //   mt="md"
-                          radius="md"
-                          compact
-                        >
-                          Go to Tweet
-                        </Button>
-                        <Button
-                          variant="light"
-                          onClick={() => handleTagModal(data.id)}
-                          color="blue"
-                          radius="md"
-                          compact
-                        >
-                          Add tag
-                        </Button>
-                      </Group>
+                        <Group position="center" className={classes.card_btns}>
+                          <Button
+                            leftIcon={<IconBrandTwitter />}
+                            component="a"
+                            href={tweetLink}
+                            target="_blank"
+                            variant="light"
+                            color="blue"
+                            //   mt="md"
+                            radius="md"
+                            compact
+                          >
+                            Go to Tweet
+                          </Button>
+                          <Button
+                            variant="light"
+                            onClick={() => handleTagModal(data.id)}
+                            color="blue"
+                            radius="md"
+                            compact
+                          >
+                            Add tag
+                          </Button>
+                        </Group>
 
-                      <AddtagModal
-                        userId={userId}
-                        tagId={tagId}
-                        dataId={data.id}
-                        setTagId={setTagId}
-                      />
+                        <AddtagModal
+                          userId={userId}
+                          tagId={tagId}
+                          dataId={data.id}
+                          setTagId={setTagId}
+                        />
 
-                      <section className={classes.badge}>
-                        {data.tags.map((e: string) => {
-                          return (
-                            <Badge
-                              key={data.id}
-                              mt={15}
-                              ml={6}
-                              radius="sm"
-                              color="pink"
-                              variant="light"
-                            >
-                              {e}
-                            </Badge>
-                          );
-                        })}
-                      </section>
-                    </Card.Section>
-                  </Card>
+                        <section className={classes.badge}>
+                          {data.tags.map((e: string) => {
+                            return (
+                              <Badge
+                                key={data.id}
+                                mt={15}
+                                ml={6}
+                                radius="sm"
+                                color="pink"
+                                variant="light"
+                              >
+                                {e}
+                              </Badge>
+                            );
+                          })}
+                        </section>
+                      </Card.Section>
+                    </Card>
 
-                  {/* <TwitterTweetEmbed tweetId={data.id} /> */}
-                  {/* <TweetEmbed tweetId={data.id} /> */}
-                </div>
-              );
-            })}
+                    {/* <TwitterTweetEmbed tweetId={data.id} /> */}
+                    {/* <TweetEmbed tweetId={data.id} /> */}
+                  </div>
+                );
+              })}
           </>
         )}
       </main>

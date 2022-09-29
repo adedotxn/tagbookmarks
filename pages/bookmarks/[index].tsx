@@ -47,6 +47,7 @@ const Bookmarks = () => {
             search={search}
             setSearch={setSearch}
             setOpenModal={setOpenModal}
+            placeholder="Search through bookmarks with username/tweet"
           />
 
           <CreateTagModal
