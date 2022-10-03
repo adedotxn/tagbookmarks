@@ -1,7 +1,7 @@
 import { Avatar, Button, Group, Indicator, Title } from "@mantine/core";
 import { IconBrandTwitter } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import InputContainer from "../components/index/input_container";
 import { indexPageStyle } from "../components/styles/index_style";
 
@@ -9,6 +9,12 @@ const Home = () => {
   const { classes } = indexPageStyle();
   const { data: session } = useSession();
   const [noOfBookmarks, setNumberOfBookmarks] = useState<number>(2);
+
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      signIn(); // Force sign in to hopefully resolve error
+    }
+  }, [session]);
 
   return (
     <div className={classes.container}>

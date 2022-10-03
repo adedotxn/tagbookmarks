@@ -1,6 +1,7 @@
 import NextAuth, { Account, NextAuthOptions, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import TwitterProvider from "next-auth/providers/twitter";
+import { refreshAccessToken } from "../../../utils/api/refreshToken";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -29,28 +30,48 @@ export const authOptions: NextAuthOptions = {
       account?: Account;
       user?: User;
     }) {
-      const provider = account?.provider !== undefined ? account.provider : "";
+      // const provider = account?.provider !== undefined ? account.provider : "";
 
-      if (provider && !token[provider]) {
-        token["twitter"] = {};
+      // if (provider && !token[provider]) {
+      //   token["twitter"] = {};
+      // }
+
+      // if (account?.access_token) {
+      //   token["twitter"].accessToken = account?.access_token!;
+      // }
+      // if (account?.refresh_token) {
+      //   token["twitter"].refreshToken = account?.refresh_token!;
+      // }
+
+      // if (user?.id) {
+      //   token["twitter"].userId = user?.id;
+      // }
+      // if (account?.expires_at) {
+      //   token["twitter"].expires = account?.expires_at;
+      // }
+
+      if (account && user) {
+        return {
+          accessToken: account.access_token,
+          accessTokenExpires: Date.now() + account.expires_at! * 1000,
+          refreshToken: account.refresh_token,
+          user,
+        };
       }
 
-      if (account?.access_token) {
-        token["twitter"].accessToken = account?.access_token!;
-      }
-      if (account?.refresh_token) {
-        token["twitter"].refreshToken = account?.refresh_token!;
+      // Return previous token if the access token has not expired yet
+      if (Date.now() < token.accessTokenExpires!) {
+        return token;
       }
 
-      if (user?.id) {
-        token["twitter"].userId = user?.id;
-      }
+      console.log("final token?", token);
 
-      return token;
+      // Access token has expired, try to update it
+      return refreshAccessToken(token);
     },
     // attaching the userID to session
     async session({ session, token }) {
-      session["user"].id = token.twitter.userId;
+      session["user"].id = token?.user?.id;
       return session;
     },
   },

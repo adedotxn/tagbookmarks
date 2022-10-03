@@ -1,5 +1,5 @@
 import { signIn, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import BookmarkCards from "../../components/bookmarks/cards";
 import EmptyBookmarks from "../../components/bookmarks/empty";
 import BookmarksPageHeader from "../../components/bookmarks/header";
@@ -25,6 +25,11 @@ const Bookmarks = () => {
   const [tags, setTags] = useState<tagInterface[]>(tagInitialValues);
 
   const { data: session } = useSession();
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      signIn(); // Force sign in to hopefully resolve error
+    }
+  }, [session]);
 
   const [search, setSearch] = useState<string>("");
 

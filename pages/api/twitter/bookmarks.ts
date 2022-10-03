@@ -10,7 +10,7 @@ export default async function handler(
   // const session = await getSession({ req });
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const ACCESS_TOKEN: string =
-    token?.twitter.accessToken !== undefined ? token.twitter.accessToken : "";
+    token?.accessToken !== undefined ? token.accessToken : "";
 
   if (ACCESS_TOKEN !== undefined || "") {
     const twitterClient = new TwitterApi(ACCESS_TOKEN);
