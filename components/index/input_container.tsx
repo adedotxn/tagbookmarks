@@ -38,7 +38,6 @@ const InputContainer = () => {
     data: returnedBookmarks,
     error,
     isFetching,
-    status,
     fetchStatus,
   } = useQuery(
     ["Bookmarks", noOfBookmarks],
@@ -155,7 +154,6 @@ const InputContainer = () => {
             component="a"
             color="gray"
             href="/tagged"
-            target="_blank"
             compact
           >
             Go view tagged bookmark-tweets

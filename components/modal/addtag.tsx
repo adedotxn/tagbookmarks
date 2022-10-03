@@ -20,6 +20,16 @@ const AddtagModal = ({
 
   const { data: allTags, isLoading: tagsLoading } = useTags(userId);
 
+  if (tagsLoading) {
+    return (
+      <>
+        <div>
+          <span>tags are loading</span>
+        </div>
+      </>
+    );
+  }
+
   if (!tagsLoading) {
     const retTags = !tagsLoading ? allTags?.data : [];
     const allUserTags: string[] = retTags[0];
@@ -69,7 +79,7 @@ const AddtagModal = ({
 
   return (
     <div>
-      <h2>Loading..</h2>
+      <span>.</span>
     </div>
   );
 };

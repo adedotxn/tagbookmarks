@@ -20,7 +20,6 @@ export default async function handler(
     const data = await Collection.find({ tweepId }).sort({
       time: -1,
     });
-    // console.log("data", data);
 
     const tweetIds: string[] = data.map((e) => {
       return e.tweetId;
@@ -31,7 +30,7 @@ export default async function handler(
       token?.accessToken !== undefined ? token.accessToken : "";
 
     if (ACCESS_TOKEN !== undefined || "") {
-      console.log("\n\taccess token type", typeof ACCESS_TOKEN);
+      console.log("\taccess token type", ACCESS_TOKEN);
       const twitterClient = new TwitterApi(ACCESS_TOKEN);
 
       const readOnlyClient = twitterClient.readOnly;
@@ -66,6 +65,7 @@ export default async function handler(
       return res.status(200).json({ data: returned });
     }
   } catch (error) {
-    return res.json(error);
+    // console.log({ error });
+    return res.status(404).json(error);
   }
 }

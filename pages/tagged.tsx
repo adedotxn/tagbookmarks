@@ -1,7 +1,7 @@
 import { Badge, Button, Card, Group, Text } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconBrandTwitter } from "@tabler/icons";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import EmptyBookmarks from "../components/bookmarks/empty";
@@ -10,7 +10,6 @@ import CreateTagModal from "../components/create_tag_modal";
 import AddtagModal from "../components/modal/addtag";
 import SearchAndCreate from "../components/search_and_create";
 import { bookmarkPageStyle } from "../components/styles/style";
-import { useActiveBookmarks } from "../utils/context";
 import { useTaggedGetter } from "../utils/hooks/getAllTagged";
 
 export interface tagInterface {
@@ -30,6 +29,12 @@ const Bookmarks = () => {
   const { classes } = bookmarkPageStyle();
   const { data: session } = useSession();
 
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      signIn(); // Force sign in to hopefully resolve error
+    }
+  }, [session]);
+
   // const [tagModal, setTagModal] = useState<string>("");
 
   const tagInitialValues = [
@@ -37,18 +42,13 @@ const Bookmarks = () => {
     { value: "funny", label: "Funny" },
     { value: "relatable", label: "Relatable" },
   ];
-  const [tags, setTags] = useState<tagInterface[]>(tagInitialValues);
 
-  // const handleTagModal = (id: string) => {
-  //   setTagModal(id);
-  // };
+  const [tags, setTags] = useState<tagInterface[]>(tagInitialValues);
 
   const [search, setSearch] = useState<string>("");
   const [debounced] = useDebouncedValue(search, 200);
 
   const [openModal, setOpenModal] = useState(false);
-
-  const { activeBookmarks } = useActiveBookmarks();
 
   const userId = session !== undefined && session?.user.id;
 
@@ -71,7 +71,11 @@ const Bookmarks = () => {
     setTagId(id);
   };
 
+  console.log("bare", allSaved);
+
   if (isLoading) {
+    console.log("loading", allSaved);
+
     return (
       <div>
         <h1>Loading...</h1>
@@ -80,6 +84,7 @@ const Bookmarks = () => {
   }
 
   if (!isLoading) {
+    console.log("not loading", allSaved);
     return (
       <div className={classes.wrapper}>
         <>
@@ -127,11 +132,11 @@ const Bookmarks = () => {
                     return data;
                   }
                 })
-                ?.map((data) => {
+                ?.map((data, index: number) => {
                   const tweetLink = data.text.slice(-24);
                   const tweet = data.text;
                   return (
-                    <div key={`${data.id}${Math.random()}`}>
+                    <div key={`${data.id}${index}`}>
                       <Card
                         className={classes.cards}
                         shadow="sm"
@@ -199,7 +204,7 @@ const Bookmarks = () => {
                             {data.tags.map((e: string) => {
                               return (
                                 <Badge
-                                  key={data.id}
+                                  key={`${data.id}${index}`}
                                   mt={15}
                                   ml={6}
                                   radius="sm"
@@ -228,7 +233,9 @@ const Bookmarks = () => {
 
   return (
     <>
-      <div> . </div>
+      <div>
+        <p>default tagged</p>
+      </div>
     </>
   );
 };
