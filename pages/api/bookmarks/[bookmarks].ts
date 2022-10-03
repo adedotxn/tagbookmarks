@@ -10,15 +10,6 @@ export default async function handler(
   const { bookmarks: number } = req.query;
   let maxResults: number = +number!;
 
-  // console.log("number: ", number);
-  // console.log("typeof number: ", typeof number);
-
-  // console.log("\nmax: ", maxResults);
-  // console.log("typeof max: ", typeof maxResults);
-
-  // console.log("\nquery", req.query);
-  // res.json(maxResults);
-
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
   const ACCESS_TOKEN: string =
     token?.twitter.accessToken !== undefined ? token.twitter.accessToken : "";
@@ -76,6 +67,7 @@ export default async function handler(
       return res.json({
         data: returnResponse,
         count: bookmarks.meta.result_count,
+        nextToken: bookmarks.meta.next_token,
       });
     } catch (error) {
       return res

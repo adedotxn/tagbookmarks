@@ -1,7 +1,7 @@
 import { Button, Group, Modal, MultiSelect } from "@mantine/core";
 import { useState } from "react";
-import { useTags } from "../../utils/api/hooks/alltags";
-import { useAddTag } from "../../utils/api/hooks/tag_tweet";
+import { useTags } from "../../utils/hooks/getAllUserTags";
+import { useAddTag } from "../../utils/hooks/tag_A_Tweet";
 
 export interface addTagInterface {
   tagId: string;

@@ -19,7 +19,7 @@ import { unstable_getServerSession } from "next-auth";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { ChangeEvent, useEffect, useState } from "react";
-import { useBookmarks, userBkmrks } from "../utils/api/api-hooks";
+import { useBookmarks, userBkmrks } from "../utils/hooks/api-hooks";
 import { BookMarkInterface } from "../utils/interface";
 import { authOptions } from "./api/auth/[...nextauth]";
 

@@ -1,11 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import apiClient from "../api/http-config";
 import { UserInterface } from "../user.interface";
-import apiClient from "./http-config";
-
-export interface createInterface {
-  tweepId: string;
-  userTags?: string;
-}
 
 export const userBkmrks = async () => {
   const fetch = await apiClient.get(`/twitter/bookmarks`);

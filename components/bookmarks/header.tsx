@@ -5,10 +5,10 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { bookmarkPageStyle } from "../styles/style";
+import { headerStyle } from "../styles/header";
 
 const BookmarksPageHeader = () => {
-  const { classes } = bookmarkPageStyle();
+  const { classes } = headerStyle();
   const matches = useMediaQuery("(min-width: 768px)", true, {
     getInitialValueInEffect: false,
   });

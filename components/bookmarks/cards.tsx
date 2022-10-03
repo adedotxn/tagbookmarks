@@ -7,7 +7,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { BookMarkInterface } from "../../utils/interface";
 import AddtagModal from "../modal/addtag";
-import { bookmarkPageStyle } from "../styles/style";
+import { cardStyle } from "../styles/card";
 import TagBadge from "./tags";
 
 export interface BookmarkCardInteface {
@@ -23,7 +23,7 @@ export interface DataInterface {
 
 const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
   const [debounced] = useDebouncedValue(search, 200);
-  const { classes } = bookmarkPageStyle();
+  const { classes } = cardStyle();
   const router = useRouter();
   const [tagId, setTagId] = useState("");
 

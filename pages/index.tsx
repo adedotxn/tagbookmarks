@@ -1,136 +1,23 @@
-import {
-  Avatar,
-  Button,
-  Group,
-  Indicator,
-  Input,
-  Loader,
-  Title,
-  Tooltip,
-} from "@mantine/core";
-import { IconAlertCircle, IconBrandTwitter, IconNumber } from "@tabler/icons";
-import { useQuery } from "@tanstack/react-query";
+import { Avatar, Button, Group, Indicator, Title } from "@mantine/core";
+import { IconBrandTwitter } from "@tabler/icons";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Link from "next/link";
-import { ChangeEvent, useEffect, useState } from "react";
+import { useState } from "react";
+import InputContainer from "../components/index/input_container";
 import { indexPageStyle } from "../components/styles/index_style";
-import apiClient from "../utils/api/http-config";
-import { useActiveBookmarks } from "../utils/context";
 
-function SearchButton({
-  initiateSearch,
-  startSearch,
-  noOfBookmarks,
-  fetchStatus,
-}: {
-  initiateSearch: () => void;
-  noOfBookmarks: number;
-  startSearch: boolean;
-  fetchStatus: "fetching" | "idle" | "paused";
-}): JSX.Element {
-  return (
-    <Button onClick={initiateSearch}>
-      {fetchStatus === "fetching" && startSearch ? (
-        <Loader color="white" size={20} mr={20} />
-      ) : (
-        ""
-      )}
-      Get {noOfBookmarks} Bookmarks
-    </Button>
-  );
-}
-
-const Load = () => {
+const Home = () => {
   const { classes } = indexPageStyle();
   const { data: session } = useSession();
   const [noOfBookmarks, setNumberOfBookmarks] = useState<number>(2);
-  const [errorMessage, setErrorMessage] = useState("");
-
-  const validate = (number: number) => {
-    if (number === 0 || (number > 1 && number <= 50)) {
-      setErrorMessage("");
-    } else if (number < 1) {
-      setErrorMessage("Number of tweets should be > 1");
-    } else if (number > 50) {
-      setErrorMessage("Number of tweets should be < 50");
-    }
-  };
-
-  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setNumberOfBookmarks(parseInt(e.target.value));
-    validate(noOfBookmarks);
-  };
-
-  const [startSearch, setStartSearch] = useState(false);
-
-  const {
-    isLoading,
-    isError,
-    data: returnedBookmarks,
-    error,
-    isFetching,
-    status,
-    fetchStatus,
-  } = useQuery(
-    ["Bookmarks", noOfBookmarks],
-    async () => {
-      const fetch = await apiClient.get(`/bookmarks/${noOfBookmarks}`);
-      console.log("fetch.data -- ", fetch.data);
-      return fetch.data;
-    },
-    {
-      retry: 10,
-      enabled: startSearch,
-    }
-  );
-
-  const { activeBookmarks, setActiveBookmarks } = useActiveBookmarks();
-
-  !isLoading &&
-    !isFetching &&
-    console.log("returneddd in effect", returnedBookmarks);
-
-  useEffect(() => {
-    !isLoading &&
-      !isFetching &&
-      returnedBookmarks !== undefined &&
-      setActiveBookmarks(returnedBookmarks.data);
-
-    // returnedBookmarks ? setStartSearch(false) : setStartSearch(true);
-  }, [
-    isFetching,
-    isLoading,
-    returnedBookmarks,
-    activeBookmarks,
-    setActiveBookmarks,
-  ]);
-
-  const initiateSearch = () => {
-    if (noOfBookmarks === (undefined || NaN)) {
-      return alert("no Of bookmarks is undefined or is not a valid number, ");
-    }
-    setStartSearch(true);
-  };
 
   return (
     <div className={classes.container}>
       <header className={classes.header}>
         <Title order={2}>BKMRKD</Title>
         {session && (
-          <>
-            {/* <div className={classes.header_details}>
-              <Title order={3}>{session.user?.name}</Title>
-              <Group position="center">
-                <Indicator color="lime">
-                  <Avatar size="sm" src={session?.user?.image!} />
-                </Indicator>
-              </Group>
-            </div> */}
-
-            <Button onClick={() => signOut()} variant="default" color="gray">
-              Log Out
-            </Button>
-          </>
+          <Button onClick={() => signOut()} variant="default" color="gray">
+            Log Out
+          </Button>
         )}
       </header>
 
@@ -150,87 +37,7 @@ const Load = () => {
       <div className={classes.wrapper}>
         {session ? (
           <>
-            <div className={classes.input_container}>
-              <Input.Wrapper
-                className="input-demo"
-                withAsterisk
-                label="Twitter Bookmarks to Fetch"
-                description="Please enter a number between 1 and 50. Fetched bookmarks may exceed this number though"
-                error={errorMessage}
-              >
-                <Input
-                  type="number"
-                  min="2"
-                  max="50"
-                  icon={<IconNumber />}
-                  value={noOfBookmarks}
-                  onChange={handleChange}
-                  placeholder="e.g 10"
-                  rightSection={
-                    <Tooltip
-                      label="No of bookmarks to get"
-                      position="top-end"
-                      withArrow
-                      mb={20}
-                    >
-                      <div>
-                        <IconAlertCircle
-                          size={18}
-                          style={{ display: "block", opacity: 0.5 }}
-                        />
-                      </div>
-                    </Tooltip>
-                  }
-                />
-              </Input.Wrapper>
-
-              {/* <Button onClick={initiateSearch}>
-                {startSearch && <Loader color="white" size={20} mr={20} />}
-                Get {noOfBookmarks} Bookmarks
-              </Button> */}
-              <SearchButton
-                initiateSearch={initiateSearch}
-                noOfBookmarks={noOfBookmarks}
-                startSearch={startSearch}
-                fetchStatus={fetchStatus}
-              />
-            </div>
-
-            <div className={classes.defaults}>
-              <Group spacing="sm" className={classes.default_btns}>
-                {returnedBookmarks ? (
-                  <>
-                    <Link href={`bookmarks/${session?.user?.name}`}>
-                      <Button>Go see bookmarks </Button>
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    {startSearch ? (
-                      <Button style={{ display: "grid", placeItems: "center" }}>
-                        <Loader color="white" size={20} mr={20} />
-                      </Button>
-                    ) : (
-                      <Button disabled>Waiting for your commmand milord</Button>
-                    )}
-                  </>
-                )}
-              </Group>
-            </div>
-
-            <div className={classes.view_tagged}>
-              <Title order={4}>Already have some bookmarks tagged?</Title>
-              <Button
-                variant="default"
-                component="a"
-                color="gray"
-                href="/tagged"
-                target="_blank"
-                compact
-              >
-                Go view tagged bookmark-tweets
-              </Button>
-            </div>
+            <InputContainer />
           </>
         ) : (
           <>
@@ -249,7 +56,6 @@ const Load = () => {
                   onClick={() => signIn("twitter")}
                   leftIcon={<IconBrandTwitter />}
                   component="a"
-                  target="_blank"
                   variant="default"
                   color="gray"
                 >
@@ -264,4 +70,4 @@ const Load = () => {
   );
 };
 
-export default Load;
+export default Home;

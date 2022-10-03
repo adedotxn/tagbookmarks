@@ -1,9 +1,9 @@
 import { Box, Button, Group, Text } from "@mantine/core";
 import { useRouter } from "next/router";
-import { bookmarkPageStyle } from "../styles/style";
+import { emptyComponentStyle } from "../styles/empty";
 
 const EmptyBookmarks = () => {
-  const { classes } = bookmarkPageStyle();
+  const { classes } = emptyComponentStyle();
   const router = useRouter();
   return (
     <>
