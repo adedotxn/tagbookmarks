@@ -54,16 +54,8 @@ const Bookmarks = () => {
   const userId = session !== undefined && session?.user.id;
 
   //getting all tweets tagged by user
-  const { data: all, error, status, isLoading } = useTaggedGetter(userId);
+  const { data: all, error, status, isLoading : taggedLoading } = useTaggedGetter(userId);
   const userData = all?.data;
-
-  // const [allSaved, setAllSaved] = useState<savedInterface[]>([]);
-
-  // if (all !== undefined) {
-  //   if (all.data !== undefined) {
-  //     setAllSaved(userData.data);
-  //   }
-  // }
 
   const [tagId, setTagId] = useState("");
   const handleTagModal = (id: string) => {
@@ -83,7 +75,7 @@ const Bookmarks = () => {
     );
   }
 
-  if (isLoading) {
+  if (taggedLoading) {
     console.log("loading", userData?.data);
 
     return (
@@ -93,7 +85,7 @@ const Bookmarks = () => {
     );
   }
 
-  if (!isLoading) {
+  if (!taggedLoading) {
     console.log("not loading", userData?.data);
     return (
       <div className={classes.wrapper}>
@@ -203,12 +195,14 @@ const Bookmarks = () => {
                             </Button>
                           </Group>
 
-                          <AddtagModal
-                            userId={userId}
-                            tagId={tagId}
-                            dataId={data.id}
-                            setTagId={setTagId}
-                          />
+                          {tagId === data.id && (
+                            <AddtagModal
+                              userId={userId}
+                              tagId={tagId}
+                              dataId={data.id}
+                              setTagId={setTagId}
+                            />
+                          )}
 
                           <section className={classes.badge}>
                             {data.tags.map((e: string) => {

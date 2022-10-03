@@ -24,7 +24,7 @@ const AddtagModal = ({
     return (
       <>
         <div>
-          <span>tags are loading</span>
+          <span>tags are loading sp</span>
         </div>
       </>
     );
