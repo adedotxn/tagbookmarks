@@ -5,6 +5,7 @@ import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import EmptyBookmarks from "../components/bookmarks/empty";
+import ErrorComponent from "../components/bookmarks/error";
 import BookmarksPageHeader from "../components/bookmarks/header";
 import CreateTagModal from "../components/create_tag_modal";
 import AddtagModal from "../components/modal/addtag";
@@ -56,25 +57,34 @@ const Bookmarks = () => {
   const { data: all, error, status, isLoading } = useTaggedGetter(userId);
   const userData = all?.data;
 
-  const [allSaved, setAllSaved] = useState<savedInterface[]>([]);
+  // const [allSaved, setAllSaved] = useState<savedInterface[]>([]);
 
-  useEffect(() => {
-    if (all !== undefined) {
-      if (all.data !== undefined) {
-        setAllSaved(userData.data);
-      }
-    }
-  }, [all, userData]);
+  // if (all !== undefined) {
+  //   if (all.data !== undefined) {
+  //     setAllSaved(userData.data);
+  //   }
+  // }
 
   const [tagId, setTagId] = useState("");
   const handleTagModal = (id: string) => {
     setTagId(id);
   };
 
-  console.log("bare", allSaved);
+  console.log("bare", userData?.data);
+
+  if (error) {
+    console.log("errorr", error);
+    return (
+      <>
+        <div>
+          <ErrorComponent error={error} />
+        </div>
+      </>
+    );
+  }
 
   if (isLoading) {
-    console.log("loading", allSaved);
+    console.log("loading", userData?.data);
 
     return (
       <div>
@@ -84,7 +94,7 @@ const Bookmarks = () => {
   }
 
   if (!isLoading) {
-    console.log("not loading", allSaved);
+    console.log("not loading", userData?.data);
     return (
       <div className={classes.wrapper}>
         <>
@@ -92,12 +102,12 @@ const Bookmarks = () => {
         </>
 
         <section>
-          {allSaved === undefined ? (
+          {userData?.data === undefined ? (
             <div>Loading....</div>
           ) : (
             <SearchAndCreate
-              length={allSaved.length}
-              info={`Tagged: ${allSaved.length} tweets`}
+              length={userData?.data.length}
+              info={`Tagged: ${userData?.data.length} tweets`}
               search={search}
               setSearch={setSearch}
               setOpenModal={setOpenModal}
@@ -114,12 +124,12 @@ const Bookmarks = () => {
         </section>
 
         <main>
-          {allSaved.length === 0 || allSaved === undefined ? (
+          {userData?.data.length === 0 || userData?.data === undefined ? (
             <EmptyBookmarks />
           ) : (
             <>
-              {allSaved
-                .filter((data) => {
+              {userData?.data
+                .filter((data: savedInterface) => {
                   if (debounced === "") {
                     return data;
                   } else if (
@@ -132,7 +142,7 @@ const Bookmarks = () => {
                     return data;
                   }
                 })
-                ?.map((data, index: number) => {
+                ?.map((data: savedInterface, index: number) => {
                   const tweetLink = data.text.slice(-24);
                   const tweet = data.text;
                   return (
