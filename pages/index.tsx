@@ -13,6 +13,7 @@ const Home = () => {
     if (session?.error === "RefreshAccessTokenError") {
       signIn(); // Force sign in to hopefully resolve error
     }
+    console.log("Session", session);
   }, [session]);
 
   return (

@@ -1,21 +1,16 @@
 import { Button, Group, Modal, TextInput } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { tagInterface } from "../pages/tagged";
-import { useCreate } from "../utils/hooks/api-hooks";
-import { bookmarkPageStyle } from "./styles/style";
+import { useCreate } from "../../utils/hooks/createTag";
+import { bookmarkPageStyle } from "../styles/style";
 
 interface CreateTagModalInterface {
   openModal: boolean;
-  tags: tagInterface[];
-  setTags: React.Dispatch<React.SetStateAction<tagInterface[]>>;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const CreateTagModal = ({
   openModal,
-  tags,
-  setTags,
   setOpenModal,
 }: CreateTagModalInterface) => {
   const { classes } = bookmarkPageStyle();

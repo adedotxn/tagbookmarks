@@ -3,26 +3,26 @@ import { useEffect, useState } from "react";
 import BookmarkCards from "../../components/bookmarks/cards";
 import EmptyBookmarks from "../../components/bookmarks/empty";
 import BookmarksPageHeader from "../../components/bookmarks/header";
-import CreateTagModal from "../../components/create_tag_modal";
+import CreateTagModal from "../../components/modal/create_tag_modal";
 import SearchAndCreate from "../../components/search_and_create";
 import { bookmarkPageStyle } from "../../components/styles/style";
 import { useActiveBookmarks } from "../../utils/context";
 
-interface tagInterface {
-  label: string;
-  value: string;
-}
+// interface tagInterface {
+//   label: string;
+//   value: string;
+// }
 
 const Bookmarks = () => {
   const { classes } = bookmarkPageStyle();
   // const [tagModal, setTagModal] = useState<string>("");
 
-  const tagInitialValues = [
-    { value: "important", label: "Important" },
-    { value: "funny", label: "Funny" },
-  ];
+  // const tagInitialValues = [
+  //   { value: "important", label: "Important" },
+  //   { value: "funny", label: "Funny" },
+  // ];
 
-  const [tags, setTags] = useState<tagInterface[]>(tagInitialValues);
+  // const [tags, setTags] = useState<tagInterface[]>(tagInitialValues);
 
   const { data: session } = useSession();
   useEffect(() => {
@@ -36,7 +36,7 @@ const Bookmarks = () => {
   const [openModal, setOpenModal] = useState(false);
 
   const { activeBookmarks } = useActiveBookmarks();
-  const userId: string = session?.user?.id;
+  // const userId: string = session?.user?.id;
 
   if (session) {
     return (
@@ -57,8 +57,8 @@ const Bookmarks = () => {
 
           <CreateTagModal
             openModal={openModal}
-            tags={tags}
-            setTags={setTags}
+            // tags={tags}
+            // setTags={setTags}
             setOpenModal={setOpenModal}
           />
         </section>

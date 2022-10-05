@@ -7,8 +7,8 @@ import { useEffect, useState } from "react";
 import EmptyBookmarks from "../components/bookmarks/empty";
 import ErrorComponent from "../components/bookmarks/error";
 import BookmarksPageHeader from "../components/bookmarks/header";
-import CreateTagModal from "../components/create_tag_modal";
 import AddtagModal from "../components/modal/addtag";
+import CreateTagModal from "../components/modal/create_tag_modal";
 import SearchAndCreate from "../components/search_and_create";
 import { bookmarkPageStyle } from "../components/styles/style";
 import { useTaggedGetter } from "../utils/hooks/getAllTagged";
@@ -38,13 +38,13 @@ const Bookmarks = () => {
 
   // const [tagModal, setTagModal] = useState<string>("");
 
-  const tagInitialValues = [
-    { value: "important", label: "Important" },
-    { value: "funny", label: "Funny" },
-    { value: "relatable", label: "Relatable" },
-  ];
+  // const tagInitialValues = [
+  //   { value: "important", label: "Important" },
+  //   { value: "funny", label: "Funny" },
+  //   { value: "relatable", label: "Relatable" },
+  // ];
 
-  const [tags, setTags] = useState<tagInterface[]>(tagInitialValues);
+  // const [tags, setTags] = useState<tagInterface[]>(tagInitialValues);
 
   const [search, setSearch] = useState<string>("");
   const [debounced] = useDebouncedValue(search, 200);
@@ -54,7 +54,11 @@ const Bookmarks = () => {
   const userId = session !== undefined && session?.user.id;
 
   //getting all tweets tagged by user
-  const { data: all, error, status, isLoading : taggedLoading } = useTaggedGetter(userId);
+  const {
+    data: all,
+    error,
+    isLoading: taggedLoading,
+  } = useTaggedGetter(userId);
   const userData = all?.data;
 
   const [tagId, setTagId] = useState("");
@@ -109,8 +113,8 @@ const Bookmarks = () => {
 
           <CreateTagModal
             openModal={openModal}
-            tags={tags}
-            setTags={setTags}
+            // tags={tags}
+            // setTags={setTags}
             setOpenModal={setOpenModal}
           />
         </section>

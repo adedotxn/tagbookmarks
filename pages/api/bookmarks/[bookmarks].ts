@@ -70,8 +70,9 @@ export default async function handler(
         nextToken: bookmarks.meta.next_token,
       });
     } catch (error) {
+      console.log("issue", { error });
       return res
-        .status(400)
+        .status(error.code)
         .json({ status: error, message: "Error in getting bookmarks" });
     }
   } else {

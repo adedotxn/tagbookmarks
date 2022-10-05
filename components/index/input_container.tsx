@@ -1,7 +1,7 @@
 import { Button, Group, Input, Loader, Title, Tooltip } from "@mantine/core";
 import { IconAlertCircle, IconNumber } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { ChangeEvent, useEffect, useState } from "react";
 import apiClient from "../../utils/api/http-config";
@@ -47,14 +47,15 @@ const InputContainer = () => {
       return fetch.data;
     },
     {
-      retry: 10,
+      retry: 2,
       enabled: startSearch,
     }
   );
 
   !isLoading &&
     !isFetching &&
-    console.log("returneddd in effect", returnedBookmarks);
+    !isError &&
+    console.log("returneddd in effect", activeBookmarks);
 
   useEffect(() => {
     !isLoading &&
@@ -69,12 +70,44 @@ const InputContainer = () => {
     setActiveBookmarks,
   ]);
 
+  useEffect(() => {
+    if (isError) {
+      setStartSearch(false);
+    }
+  }, [isError]);
+
   const initiateSearch = () => {
     if (noOfBookmarks === (undefined || NaN)) {
       return alert("number is undefined or is not a valid number, ");
     }
     setStartSearch(true);
   };
+
+  if (isError) {
+    return (
+      <section className={classes.errorComponent}>
+        <div>
+          <p>
+            Sorry 😬, Failed getting your bookmarks. Twitter requires your
+            reauthorization
+          </p>
+          <p>
+            or i just have not figured out how to persist your authorization
+            state (yet) 😔, either way
+          </p>
+        </div>
+
+        <Button
+          variant="default"
+          color="gray"
+          compact
+          onClick={() => signIn("twitter")}
+        >
+          Authorize twitter-bkmrkd again :)
+        </Button>
+      </section>
+    );
+  }
 
   return (
     <>

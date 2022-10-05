@@ -51,6 +51,7 @@ export const authOptions: NextAuthOptions = {
       // }
 
       if (account && user) {
+        console.log("User found");
         return {
           accessToken: account.access_token,
           accessTokenExpires: Date.now() + account.expires_at! * 1000,
@@ -69,9 +70,13 @@ export const authOptions: NextAuthOptions = {
       // Access token has expired, try to update it
       return refreshAccessToken(token);
     },
-    // attaching the userID to session
     async session({ session, token }) {
       session["user"].id = token?.user?.id;
+      session["user"].image = token?.user?.image;
+      session["user"].name = token?.user?.name;
+      session.accessToken = token.accessToken;
+      session.error = token.error;
+
       return session;
     },
   },

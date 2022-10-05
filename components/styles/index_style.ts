@@ -155,4 +155,22 @@ export const indexPageStyle = createStyles((theme, _params, getRef) => ({
       WebkitTextFillColor: "transparent",
     },
   },
+  errorComponent: {
+    display: "grid",
+    placeItems: "center",
+    border: "1px solid grey",
+    borderRadius: ".5rem",
+    width: "80vw",
+
+    div: {
+      p: {
+        textAlign: "center",
+        fontWeight: 500,
+      },
+    },
+
+    button: {
+      margin: "1rem 0rem",
+    },
+  },
 }));
