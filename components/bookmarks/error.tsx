@@ -6,13 +6,13 @@ const ErrorComponent = ({ error }: any) => {
   const { classes } = emptyComponentStyle();
   const router = useRouter();
 
-  const message = error.message;
+  const message = error;
   return (
     <>
       <Box className={classes.empty}>
         <div>
           <Text align="center" size={20} weight={700}>
-            Error : {message}
+            {message}
           </Text>
           <Group mt={30} position="center">
             <Button

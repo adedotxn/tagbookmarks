@@ -69,15 +69,29 @@ const Bookmarks = () => {
 
   console.log("bare", userData?.data);
 
-  if (error) {
-    console.log("errorr", error);
+  if (all === undefined || all?.data.length === 0) {
     return (
       <>
         <div>
-          <ErrorComponent error={error} />
+          <ErrorComponent error="You have not tagged any bookmarks yet 😊" />
         </div>
       </>
     );
+  }
+
+  if (error) {
+    console.log("errorr", error);
+    if (error instanceof Error) {
+      return (
+        <div>
+          <ErrorComponent error={error?.message} />
+        </div>
+      );
+    } else {
+      <div>
+        <ErrorComponent error="Unexpected Error" />
+      </div>;
+    }
   }
 
   if (taggedLoading) {

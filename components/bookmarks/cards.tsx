@@ -29,10 +29,19 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
   const [tagId, setTagId] = useState("");
   const { data: session } = useSession();
   const userId: string = session?.user?.id;
-  const { data: allTags, isLoading: tagsLoading } = useTags(userId);
+  const {
+    data: allTags,
+    isLoading: tagsLoading,
+    isError: isTagError,
+    error: tagError,
+  } = useTags(userId);
+  // console.log("alltags", allTags);
+  // console.log("isError", isTagError);
+  // console.log("error", tagError);
 
   const handleTagModal = (id: string) => {
     setTagId(id);
+    console.log(id);
   };
 
   return (

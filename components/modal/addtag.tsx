@@ -1,4 +1,5 @@
-import { Button, Group, Modal, MultiSelect, Text } from "@mantine/core";
+import { Button, Group, Modal, MultiSelect } from "@mantine/core";
+import { IconPlus } from "@tabler/icons";
 import { useState } from "react";
 import { useAddTag } from "../../utils/hooks/tag_A_Tweet";
 import CreateTagModal from "./create_tag_modal";
@@ -31,7 +32,7 @@ const AddtagModal = ({
 
   // const { data: allTags, isLoading: tagsLoading } = useTags(userId);
 
-  if (!tagsLoading) {
+  if (!tagsLoading && allTags?.data.length !== 0) {
     const retTags = !tagsLoading ? allTags?.data : [];
     const allUserTags: string[] = retTags[0];
 
@@ -69,40 +70,48 @@ const AddtagModal = ({
         onClose={() => setTagId("shagabum")}
         title="Select a tag"
       >
-        {dataForMultiSelect.length === 0 ? (
-          <div>
-            <Text> Create tags first boss</Text>
-            <CreateTagModal
-              openModal={openCreateTag}
-              setOpenModal={setOpenCreateTag}
-            />
-          </div>
-        ) : (
-          <>
-            <MultiSelect
-              value={value}
-              onChange={setValue}
-              data={dataForMultiSelect}
-              label="Select tag to add"
-            />
+        <MultiSelect
+          value={value}
+          onChange={setValue}
+          data={dataForMultiSelect}
+          label="Select tag to add"
+        />
 
-            <Group position="center">
-              <Button //*the dataId is the tweet id
-                onClick={() => onTagClose(dataId)}
-                variant="default"
-              >
-                Add Tag
-              </Button>
-            </Group>
-          </>
-        )}
+        <Group position="center">
+          <Button //*the dataId is the tweet id
+            onClick={() => onTagClose(dataId)}
+            variant="default"
+          >
+            Add Tag
+          </Button>
+        </Group>
       </Modal>
     );
   }
 
   return (
     <div>
-      <span>.</span>
+      <Modal
+        opened={tagId === dataId}
+        onClose={() => setTagId("shagabum")}
+        title="You have no tags created yet"
+      >
+        <div>
+          <Button
+            mt={10}
+            onClick={() => setOpenCreateTag(true)}
+            variant="default"
+            leftIcon={<IconPlus />}
+          >
+            Create Tag
+          </Button>
+
+          <CreateTagModal
+            openModal={openCreateTag}
+            setOpenModal={setOpenCreateTag}
+          />
+        </div>
+      </Modal>
     </div>
   );
 };

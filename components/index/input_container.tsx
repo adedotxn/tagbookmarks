@@ -47,7 +47,7 @@ const InputContainer = () => {
       return fetch.data;
     },
     {
-      retry: 2,
+      retry: 5,
       enabled: startSearch,
     }
   );
