@@ -2,7 +2,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../../db/connect";
 import User from "../../../../db/models/user";
-import logger from "../../../../utils/logger";
 import { UserInterface } from "../../../../utils/user.interface";
 
 export default async function handler(
@@ -12,7 +11,6 @@ export default async function handler(
   try {
     await connect();
     const { id: tweepId } = req.query;
-    logger.info("/tags/all");
 
     const data: UserInterface[] = await User.find({ tweepId }).sort({
       time: -1,
