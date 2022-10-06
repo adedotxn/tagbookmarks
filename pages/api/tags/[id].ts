@@ -16,18 +16,22 @@ export default async function handler(
     const { id: tweepId } = req.query;
     await connect();
     console.log(`/tags/${tweepId}`);
+    console.log("sdsd", { tweepId });
 
     const data = await Collection.find({ tweepId }).sort({
       time: -1,
     });
+    console.log("got data");
 
     const tweetIds: string[] = data.map((e) => {
       return e.tweetId;
     });
+    console.log("got tweet ids");
 
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
     const ACCESS_TOKEN: string =
       token?.accessToken !== undefined ? token.accessToken : "";
+    console.log("token is available");
 
     if (ACCESS_TOKEN !== undefined || "") {
       console.log("\taccess token type", ACCESS_TOKEN);
@@ -62,10 +66,11 @@ export default async function handler(
         };
       });
 
+      console.log("returnrd is available");
+
       return res.status(200).json({ data: returned });
     }
   } catch (error) {
-    // console.log({ error });
-    return res.status(404).json(error);
+    return res.status(404).json({ error, errorCode: error?.status.data });
   }
 }

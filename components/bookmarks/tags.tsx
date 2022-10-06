@@ -45,7 +45,7 @@ const TagBadge = ({ tweepId, tweetId }: TagBadgeInterface): JSX.Element => {
         {returned?.tweetId === tweetId
           ? data.map((e: string) => {
               return (
-                <div key={tweetId}>
+                <div key={e}>
                   <Badge
                     mt={15}
                     ml={6}

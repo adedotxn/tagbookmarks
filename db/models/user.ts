@@ -1,5 +1,5 @@
 import { model, models, Schema } from "mongoose";
-import { UserInterface } from "../../utils/user.interface";
+import { UserInterface } from "../../utils/interface/user.interface";
 
 const UserSchema = new Schema<UserInterface>({
   tweepId: {

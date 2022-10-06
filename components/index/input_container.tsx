@@ -46,7 +46,7 @@ const InputContainer = () => {
     ["Bookmarks", noOfBookmarks],
     async () => {
       const fetch = await apiClient.get(`/bookmarks/${noOfBookmarks}`);
-      console.log("fetch.data -- ", fetch.data);
+      console.log("fetch.data --- ", fetch.data);
       return fetch.data;
     },
     {

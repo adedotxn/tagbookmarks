@@ -5,8 +5,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
-import { useTags } from "../../utils/hooks/getAllUserTags";
-import { BookMarkInterface } from "../../utils/interface";
+import { useTags } from "../../utils/api/hooks/getAllUserTags";
+import { BookMarkInterface } from "../../utils/interface/context.interface";
 import AddtagModal from "../modal/addtag";
 import { cardStyle } from "../styles/card";
 import TagBadge from "./tags";
@@ -117,11 +117,7 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
                   </Group>
 
                   {router.pathname.includes("bookmarks") && (
-                    <TagBadge
-                      key={data.id}
-                      tweepId={userId}
-                      tweetId={data.id}
-                    />
+                    <TagBadge tweepId={userId} tweetId={data.id} />
                   )}
                 </Card.Section>
               </Card>

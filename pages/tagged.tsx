@@ -11,8 +11,8 @@ import AddtagModal from "../components/modal/addtag";
 import CreateTagModal from "../components/modal/create_tag_modal";
 import SearchAndCreate from "../components/search_and_create";
 import { bookmarkPageStyle } from "../components/styles/style";
-import { useTaggedGetter } from "../utils/hooks/getAllTagged";
-import { useTags } from "../utils/hooks/getAllUserTags";
+import { useTaggedGetter } from "../utils/api/hooks/getAllTagged";
+import { useTags } from "../utils/api/hooks/getAllUserTags";
 
 export interface tagInterface {
   label: string;
@@ -32,6 +32,7 @@ const Bookmarks = () => {
   const { data: session } = useSession();
   const userId = session !== undefined && session?.user.id;
   const { data: allTags, isLoading: tagsLoading } = useTags(userId);
+  const [value, setValue] = useState<string | null>("");
 
   useEffect(() => {
     if (session?.error === "RefreshAccessTokenError") {
@@ -51,6 +52,17 @@ const Bookmarks = () => {
 
   const [search, setSearch] = useState<string>("");
   const [debounced] = useDebouncedValue(search, 200);
+  const [toSearch, setToSearch] = useState(debounced);
+
+  useEffect(() => {
+    if (value === null || value === "") {
+      return setToSearch(debounced);
+    }
+
+    if (value.length !== 0 && value !== null) {
+      setToSearch(value);
+    }
+  }, [value]);
 
   const [openModal, setOpenModal] = useState(false);
 
@@ -69,9 +81,7 @@ const Bookmarks = () => {
     setTagId(id);
   };
 
-  console.log("bare", userData?.data);
-
-  if (all === undefined || all?.data.length === 0) {
+  if (all?.data.length === 0) {
     return (
       <>
         <div>
@@ -82,7 +92,6 @@ const Bookmarks = () => {
   }
 
   if (error) {
-    console.log("errorr", error);
     if (error instanceof Error) {
       return (
         <div>
@@ -97,8 +106,6 @@ const Bookmarks = () => {
   }
 
   if (taggedLoading) {
-    console.log("loading", userData?.data);
-
     return (
       <div>
         <h1>Loading...</h1>
@@ -107,7 +114,6 @@ const Bookmarks = () => {
   }
 
   if (!taggedLoading) {
-    console.log("not loading", userData?.data);
     return (
       <div className={classes.wrapper}>
         <>
@@ -125,6 +131,8 @@ const Bookmarks = () => {
               setSearch={setSearch}
               setOpenModal={setOpenModal}
               placeholder="Search through tagged with username/tags"
+              value={value}
+              setValue={setValue}
             />
           )}
 
@@ -143,14 +151,14 @@ const Bookmarks = () => {
             <>
               {userData?.data
                 .filter((data: savedInterface) => {
-                  if (debounced === "") {
+                  if (toSearch === "") {
                     return data;
                   } else if (
-                    data.text.toLowerCase().includes(debounced.toLowerCase()) ||
+                    data.text.toLowerCase().includes(toSearch.toLowerCase()) ||
                     data.username
                       .toLowerCase()
-                      .includes(debounced.toLowerCase()) ||
-                    data.tags.includes(`${debounced}`)
+                      .includes(toSearch.toLowerCase()) ||
+                    data.tags.includes(`${toSearch}`)
                   ) {
                     return data;
                   }
@@ -233,7 +241,7 @@ const Bookmarks = () => {
                             {data.tags.map((e: string) => {
                               return (
                                 <Badge
-                                  key={`${data.id}${index}`}
+                                  key={e}
                                   mt={15}
                                   ml={6}
                                   radius="sm"

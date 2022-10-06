@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import apiClient from "../api/http-config";
-import { CollectionInterface } from "../collection.interface";
+import { CollectionInterface } from "../../interface/collection.interface";
+import apiClient from "../http-config";
 
 /**
  * add new tag to tweet

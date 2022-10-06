@@ -1,7 +1,7 @@
 import { Button, Group, Modal, TextInput } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { useCreate } from "../../utils/hooks/createTag";
+import { useCreate } from "../../utils/api/hooks/createTag";
 import { bookmarkPageStyle } from "../styles/style";
 
 interface CreateTagModalInterface {

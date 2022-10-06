@@ -1,7 +1,8 @@
 import { Button, Group, Modal, MultiSelect } from "@mantine/core";
 import { IconPlus } from "@tabler/icons";
 import { useState } from "react";
-import { useAddTag } from "../../utils/hooks/tag_A_Tweet";
+import { useAddTag } from "../../utils/api/hooks/tag_A_Tweet";
+import { getSelectTags } from "../../utils/selectData";
 import CreateTagModal from "./create_tag_modal";
 
 export interface addTagInterface {
@@ -15,10 +16,6 @@ export interface addTagInterface {
   tagError: unknown;
 }
 
-interface multiselectInterface {
-  label: string;
-  value: string;
-}
 const AddtagModal = ({
   userId,
   tagId,
@@ -34,32 +31,11 @@ const AddtagModal = ({
 
   const addTagMutation = useAddTag();
 
-  // const { data: allTags, isLoading: tagsLoading } = useTags(userId);
-
   if (!tagsLoading && allTags?.data.length !== 0 && !isTagError) {
-    if (isTagError) {
-      console.log("not suppposed to show butt", tagError);
-    }
-    const retTags = !tagsLoading ? allTags?.data : [];
+    const retTags = !tagsLoading ? allTags?.data : [[]];
     const allUserTags: string[] = retTags[0];
 
-    let filtered;
-    let dataForMultiSelect: multiselectInterface[];
-
-    if (allUserTags !== undefined) {
-      filtered = allUserTags.filter((item) => item !== null || undefined);
-
-      dataForMultiSelect = Array.isArray(filtered)
-        ? filtered.map((e) => {
-            return {
-              value: e,
-              label: e,
-            };
-          })
-        : [];
-    } else {
-      dataForMultiSelect = [];
-    }
+    const dataForMultiSelect = getSelectTags(allUserTags);
 
     const onTagClose = (id: string) => {
       setTagId("shagabum");

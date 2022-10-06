@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import apiClient from "../api/http-config";
+import apiClient from "../http-config";
 
 export interface createInterface {
   tweepId: string;
@@ -24,3 +24,22 @@ export const userNumberedBookmarks = async (maxResults: number) => {
 export const useDataGetter = (id: string) => {
   return useQuery(["tags", id], () => apiClient.get(`/user/${id}`));
 };
+
+// export const useTwitterBookmarks = async (
+//   maxResults: number,
+//   startSearch: boolean
+// ) => {
+//   const ret = useQuery(
+//     ["Bookmarks", maxResults],
+//     async () => {
+//       const fetch = await apiClient.get(`/bookmarks/${maxResults}`);
+//       console.log("fetch.data --- ", fetch.data);
+//       return fetch.data;
+//     },
+//     {
+//       retry: 4,
+//       enabled: startSearch,
+//     }
+//   );
+
+// };

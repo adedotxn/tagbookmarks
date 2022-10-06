@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../../db/connect";
 import Collection from "../../../../db/models/collection";
-import { CollectionInterface } from "../../../../utils/collection.interface";
+import { CollectionInterface } from "../../../../utils/interface/collection.interface";
 
 export default async function handler(
   req: NextApiRequest,

@@ -1,5 +1,5 @@
 import { model, models, Schema } from "mongoose";
-import { CollectionInterface } from "../../utils/collection.interface";
+import { CollectionInterface } from "../../utils/interface/collection.interface";
 
 const CollectionSchema = new Schema<CollectionInterface>({
   tweepId: {

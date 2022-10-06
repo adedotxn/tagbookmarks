@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import apiClient from "../api/http-config";
+import apiClient from "../http-config";
 
 /**
  * get all the tweets that have been tagged by a user

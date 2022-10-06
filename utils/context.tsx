@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState } from "react";
-import { bookmarkContextInterface, BookMarkInterface } from "./interface";
+import {
+  bookmarkContextInterface,
+  BookMarkInterface,
+} from "./interface/context.interface";
 
 const bookmarksContextDefaultValue: bookmarkContextInterface = {
   activeBookmarks: [],

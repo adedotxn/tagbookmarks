@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../../db/connect";
 import User from "../../../../db/models/user";
-import { UserInterface } from "../../../../utils/user.interface";
+import { UserInterface } from "../../../../utils/interface/user.interface";
 
 export default async function handler(
   req: NextApiRequest,

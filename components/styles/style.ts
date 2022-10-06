@@ -17,12 +17,12 @@ export const bookmarkPageStyle = createStyles((theme, _params, getRef) => ({
       [`& .${getRef("mid_section")}`]: {
         width: "90vw",
         display: "flex",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
       },
 
       [`& .${getRef("search")}`]: {
         input: {
-          width: "40vw",
+          width: "20vw",
           marginBottom: ".6rem",
         },
       },
@@ -131,6 +131,20 @@ export const bookmarkPageStyle = createStyles((theme, _params, getRef) => ({
 
     div: {
       width: "fit-content",
+    },
+  },
+
+  tagSelect: {
+    marginTop: ".5rem",
+
+    // div: {
+    //   display: "grid",
+    //   placeItems: "center",
+    // },
+
+    label: {
+      fontWeight: 700,
+      paddingBlock: ".3rem",
     },
   },
 }));

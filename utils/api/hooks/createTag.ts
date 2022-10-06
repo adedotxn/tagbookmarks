@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import apiClient from "../api/http-config";
-import { UserInterface } from "../user.interface";
+import { UserInterface } from "../../interface/user.interface";
+import apiClient from "../http-config";
 
 export interface createInterface {
   tweepId: string;

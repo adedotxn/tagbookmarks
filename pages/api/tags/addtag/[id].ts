@@ -3,8 +3,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../../db/connect";
 import Collection from "../../../../db/models/collection";
 import User from "../../../../db/models/user";
-import { CollectionInterface } from "../../../../utils/collection.interface";
-import { UserInterface } from "../../../../utils/user.interface";
+import { CollectionInterface } from "../../../../utils/interface/collection.interface";
+import { UserInterface } from "../../../../utils/interface/user.interface";
 
 export default async function handler(
   req: NextApiRequest,
