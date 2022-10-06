@@ -9,6 +9,19 @@ import { useActiveBookmarks } from "../../utils/context";
 import { indexPageStyle } from "../styles/index_style";
 import SearchButton from "./searchButton";
 
+const validate = (
+  number: number,
+  setState: React.Dispatch<React.SetStateAction<string>>
+) => {
+  if (number === 0 || (number > 1 && number <= 50)) {
+    setState("");
+  } else if (number < 1) {
+    setState("Number of tweets should be > 1");
+  } else if (number > 50) {
+    setState("Number of tweets should be < 50");
+  }
+};
+
 const InputContainer = () => {
   const { classes } = indexPageStyle();
   const { data: session } = useSession();
@@ -17,19 +30,9 @@ const InputContainer = () => {
   const [startSearch, setStartSearch] = useState(false);
   const { activeBookmarks, setActiveBookmarks } = useActiveBookmarks();
 
-  const validate = (number: number) => {
-    if (number === 0 || (number > 1 && number <= 50)) {
-      setErrorMessage("");
-    } else if (number < 1) {
-      setErrorMessage("Number of tweets should be > 1");
-    } else if (number > 50) {
-      setErrorMessage("Number of tweets should be < 50");
-    }
-  };
-
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNumberOfBookmarks(parseInt(e.target.value));
-    validate(noOfBookmarks);
+    validate(noOfBookmarks, setErrorMessage);
   };
 
   const {
@@ -47,7 +50,7 @@ const InputContainer = () => {
       return fetch.data;
     },
     {
-      retry: 5,
+      retry: 4,
       enabled: startSearch,
     }
   );

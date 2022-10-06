@@ -35,13 +35,12 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
     isError: isTagError,
     error: tagError,
   } = useTags(userId);
-  // console.log("alltags", allTags);
-  // console.log("isError", isTagError);
-  // console.log("error", tagError);
+  console.log("alltags", allTags);
+  console.log("isError", isTagError);
+  console.log("error", tagError);
 
   const handleTagModal = (id: string) => {
     setTagId(id);
-    console.log(id);
   };
 
   return (
@@ -137,6 +136,8 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
                 setTagId={setTagId}
                 allTags={allTags}
                 tagsLoading={tagsLoading}
+                isTagError={isTagError}
+                tagError={tagError}
               />
             </div>
           );

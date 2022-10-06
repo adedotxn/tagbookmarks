@@ -11,6 +11,8 @@ export interface addTagInterface {
   userId: string;
   allTags: any;
   tagsLoading: boolean;
+  isTagError: boolean;
+  tagError: unknown;
 }
 
 interface multiselectInterface {
@@ -24,6 +26,8 @@ const AddtagModal = ({
   setTagId,
   allTags,
   tagsLoading,
+  isTagError,
+  tagError,
 }: addTagInterface): JSX.Element => {
   const [value, setValue] = useState<string[]>([]);
   const [openCreateTag, setOpenCreateTag] = useState<boolean>(false);
@@ -32,7 +36,10 @@ const AddtagModal = ({
 
   // const { data: allTags, isLoading: tagsLoading } = useTags(userId);
 
-  if (!tagsLoading && allTags?.data.length !== 0) {
+  if (!tagsLoading && allTags?.data.length !== 0 && !isTagError) {
+    if (isTagError) {
+      console.log("not suppposed to show butt", tagError);
+    }
     const retTags = !tagsLoading ? allTags?.data : [];
     const allUserTags: string[] = retTags[0];
 

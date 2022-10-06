@@ -59,6 +59,8 @@ const Bookmarks = () => {
     data: all,
     error,
     isLoading: taggedLoading,
+    isError: isTagError,
+    error: tagError,
   } = useTaggedGetter(userId);
   const userData = all?.data;
 
@@ -222,6 +224,8 @@ const Bookmarks = () => {
                               setTagId={setTagId}
                               allTags={allTags}
                               tagsLoading={tagsLoading}
+                              isTagError={isTagError}
+                              tagError={tagError}
                             />
                           )}
 
