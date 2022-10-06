@@ -1,6 +1,5 @@
 import { Button, Group, Modal, MultiSelect, Text } from "@mantine/core";
 import { useState } from "react";
-import { useTags } from "../../utils/hooks/getAllUserTags";
 import { useAddTag } from "../../utils/hooks/tag_A_Tweet";
 import CreateTagModal from "./create_tag_modal";
 
@@ -9,6 +8,8 @@ export interface addTagInterface {
   setTagId: React.Dispatch<React.SetStateAction<string>>;
   dataId: string;
   userId: string;
+  allTags: any;
+  tagsLoading: boolean;
 }
 
 interface multiselectInterface {
@@ -20,13 +21,15 @@ const AddtagModal = ({
   tagId,
   dataId,
   setTagId,
+  allTags,
+  tagsLoading,
 }: addTagInterface): JSX.Element => {
   const [value, setValue] = useState<string[]>([]);
   const [openCreateTag, setOpenCreateTag] = useState<boolean>(false);
 
   const addTagMutation = useAddTag();
 
-  const { data: allTags, isLoading: tagsLoading } = useTags(userId);
+  // const { data: allTags, isLoading: tagsLoading } = useTags(userId);
 
   if (!tagsLoading) {
     const retTags = !tagsLoading ? allTags?.data : [];

@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { useTags } from "../../utils/hooks/getAllUserTags";
 import { BookMarkInterface } from "../../utils/interface";
 import AddtagModal from "../modal/addtag";
 import { cardStyle } from "../styles/card";
@@ -26,12 +27,13 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
   const { classes } = cardStyle();
   const router = useRouter();
   const [tagId, setTagId] = useState("");
+  const { data: session } = useSession();
+  const userId: string = session?.user?.id;
+  const { data: allTags, isLoading: tagsLoading } = useTags(userId);
 
   const handleTagModal = (id: string) => {
     setTagId(id);
   };
-  const { data: session } = useSession();
-  const userId: string = session?.user?.id;
 
   return (
     <>
@@ -124,6 +126,8 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
                 tagId={tagId}
                 dataId={data.id}
                 setTagId={setTagId}
+                allTags={allTags}
+                tagsLoading={tagsLoading}
               />
             </div>
           );

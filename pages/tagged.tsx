@@ -12,6 +12,7 @@ import CreateTagModal from "../components/modal/create_tag_modal";
 import SearchAndCreate from "../components/search_and_create";
 import { bookmarkPageStyle } from "../components/styles/style";
 import { useTaggedGetter } from "../utils/hooks/getAllTagged";
+import { useTags } from "../utils/hooks/getAllUserTags";
 
 export interface tagInterface {
   label: string;
@@ -29,6 +30,8 @@ export interface savedInterface {
 const Bookmarks = () => {
   const { classes } = bookmarkPageStyle();
   const { data: session } = useSession();
+  const userId = session !== undefined && session?.user.id;
+  const { data: allTags, isLoading: tagsLoading } = useTags(userId);
 
   useEffect(() => {
     if (session?.error === "RefreshAccessTokenError") {
@@ -50,8 +53,6 @@ const Bookmarks = () => {
   const [debounced] = useDebouncedValue(search, 200);
 
   const [openModal, setOpenModal] = useState(false);
-
-  const userId = session !== undefined && session?.user.id;
 
   //getting all tweets tagged by user
   const {
@@ -205,6 +206,8 @@ const Bookmarks = () => {
                               tagId={tagId}
                               dataId={data.id}
                               setTagId={setTagId}
+                              allTags={allTags}
+                              tagsLoading={tagsLoading}
                             />
                           )}
 
