@@ -1,18 +1,20 @@
-import { Badge, Button, Card, Group, Text } from "@mantine/core";
+/* eslint-disable react/no-unescaped-entities */
+import { Notification } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
-import { IconBrandTwitter } from "@tabler/icons";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
+import { GetServerSidePropsContext } from "next";
+import { unstable_getServerSession } from "next-auth";
 import { signIn, useSession } from "next-auth/react";
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import EmptyBookmarks from "../components/bookmarks/empty";
 import ErrorComponent from "../components/bookmarks/error";
 import BookmarksPageHeader from "../components/bookmarks/header";
-import AddtagModal from "../components/modal/addtag";
 import CreateTagModal from "../components/modal/create_tag_modal";
 import SearchAndCreate from "../components/search_and_create";
 import { bookmarkPageStyle } from "../components/styles/style";
+import TaggedCards from "../components/tagged/cards";
 import { useTaggedGetter } from "../utils/api/hooks/getAllTagged";
-import { useTags } from "../utils/api/hooks/getAllUserTags";
+import apiClient from "../utils/api/http-config";
+import { authOptions } from "./api/auth/[...nextauth]";
 
 export interface tagInterface {
   label: string;
@@ -28,45 +30,17 @@ export interface savedInterface {
 }
 
 const Bookmarks = () => {
-  const { classes } = bookmarkPageStyle();
-  const { data: session } = useSession();
-  const userId = session !== undefined && session?.user.id;
-  const { data: allTags, isLoading: tagsLoading } = useTags(userId);
+  /** States */
   const [value, setValue] = useState<string | null>("");
-
-  useEffect(() => {
-    if (session?.error === "RefreshAccessTokenError") {
-      signIn(); // Force sign in to hopefully resolve error
-    }
-  }, [session]);
-
-  // const [tagModal, setTagModal] = useState<string>("");
-
-  // const tagInitialValues = [
-  //   { value: "important", label: "Important" },
-  //   { value: "funny", label: "Funny" },
-  //   { value: "relatable", label: "Relatable" },
-  // ];
-
-  // const [tags, setTags] = useState<tagInterface[]>(tagInitialValues);
-
   const [search, setSearch] = useState<string>("");
   const [debounced] = useDebouncedValue(search, 200);
   const [toSearch, setToSearch] = useState(debounced);
-
-  useEffect(() => {
-    if (value === null || value === "") {
-      return setToSearch(debounced);
-    }
-
-    if (value.length !== 0 && value !== null) {
-      setToSearch(value);
-    }
-  }, [value]);
-
   const [openModal, setOpenModal] = useState(false);
 
-  //getting all tweets tagged by user
+  /**  Fetching / Getting */
+  const { classes } = bookmarkPageStyle();
+  const { data: session } = useSession();
+  const userId = session !== undefined && session?.user.id;
   const {
     data: all,
     error,
@@ -76,11 +50,23 @@ const Bookmarks = () => {
   } = useTaggedGetter(userId);
   const userData = all?.data;
 
-  const [tagId, setTagId] = useState("");
-  const handleTagModal = (id: string) => {
-    setTagId(id);
-  };
+  /** Effects */
+  useEffect(() => {
+    if (session?.error === "RefreshAccessTokenError") {
+      signIn(); // Force sign in to hopefully resolve error
+    }
+  }, [session]);
 
+  useEffect(() => {
+    if (value === null || value === "" || value.length === 0) {
+      return setToSearch(debounced);
+    }
+    if (value.length !== 0 && value !== null) {
+      setToSearch(value);
+    }
+  }, [value, debounced]);
+
+  /** Component Conditional Rendering */
   if (all?.data.length === 0) {
     return (
       <>
@@ -107,8 +93,18 @@ const Bookmarks = () => {
 
   if (taggedLoading) {
     return (
-      <div>
-        <h1>Loading...</h1>
+      <div className={classes.tagged_prompt}>
+        <Notification
+          loading
+          title="Getting your tagged bookmarks from server"
+          disallowClose
+        >
+          This should not take too long.
+          <br />
+          {/* You might have to reauthorize this app's access to your twitter if the
+          prompt shows <br /> */}
+          Keep in mind, We do not see/track your twitter activities
+        </Notification>
       </div>
     );
   }
@@ -145,124 +141,12 @@ const Bookmarks = () => {
         </section>
 
         <main>
-          {userData?.data.length === 0 || userData?.data === undefined ? (
-            <EmptyBookmarks />
-          ) : (
-            <>
-              {userData?.data
-                .filter((data: savedInterface) => {
-                  if (toSearch === "") {
-                    return data;
-                  } else if (
-                    data.text.toLowerCase().includes(toSearch.toLowerCase()) ||
-                    data.username
-                      .toLowerCase()
-                      .includes(toSearch.toLowerCase()) ||
-                    data.tags.includes(`${toSearch}`)
-                  ) {
-                    return data;
-                  }
-                })
-                ?.map((data: savedInterface, index: number) => {
-                  const tweetLink = data.text.slice(-24);
-                  const tweet = data.text;
-                  return (
-                    <div key={`${data.id}${index}`}>
-                      <Card
-                        className={classes.cards}
-                        shadow="sm"
-                        //   p="lg"
-                        radius="md"
-                        mt={40}
-                        withBorder
-                      >
-                        <Card.Section className={classes.card_section}>
-                          <Group>
-                            <Link href={`https://twitter.com/${data.username}`}>
-                              <a target="blank">
-                                <Text className={classes.username} weight={800}>
-                                  @{data.username}
-                                </Text>
-                              </a>
-                            </Link>
-                          </Group>
-
-                          <Text mt={5} weight={500} size="sm">
-                            {tweet}
-                          </Text>
-
-                          {/* <TwitterTweetEmbed
-                          options={{ height: 200, theme: "dark" }}
-                          tweetId={data.id}
-                        /> */}
-
-                          <Group
-                            position="center"
-                            className={classes.card_btns}
-                          >
-                            <Button
-                              leftIcon={<IconBrandTwitter />}
-                              component="a"
-                              href={tweetLink}
-                              target="_blank"
-                              variant="light"
-                              color="blue"
-                              //   mt="md"
-                              radius="md"
-                              compact
-                            >
-                              Go to Tweet
-                            </Button>
-                            <Button
-                              variant="light"
-                              onClick={() => handleTagModal(data.id)}
-                              color="blue"
-                              radius="md"
-                              compact
-                            >
-                              Add tag
-                            </Button>
-                          </Group>
-
-                          {tagId === data.id && (
-                            <AddtagModal
-                              userId={userId}
-                              tagId={tagId}
-                              dataId={data.id}
-                              setTagId={setTagId}
-                              allTags={allTags}
-                              tagsLoading={tagsLoading}
-                              isTagError={isTagError}
-                              tagError={tagError}
-                            />
-                          )}
-
-                          <section className={classes.badge}>
-                            {data.tags.map((e: string) => {
-                              return (
-                                <Badge
-                                  key={e}
-                                  mt={15}
-                                  ml={6}
-                                  radius="sm"
-                                  color="pink"
-                                  variant="light"
-                                >
-                                  {e}
-                                </Badge>
-                              );
-                            })}
-                          </section>
-                        </Card.Section>
-                      </Card>
-
-                      {/* <TwitterTweetEmbed tweetId={data.id} /> */}
-                      {/* <TweetEmbed tweetId={data.id} /> */}
-                    </div>
-                  );
-                })}
-            </>
-          )}
+          <TaggedCards
+            toSearch={toSearch}
+            userData={userData}
+            isTagError={isTagError}
+            tagError={tagError}
+          />
         </main>
       </div>
     );
@@ -271,10 +155,34 @@ const Bookmarks = () => {
   return (
     <>
       <div>
-        <p>default tagged</p>
+        <p>
+          Ooops, you were not supposed to see this 😳. Go back to homepage and
+          retry
+        </p>
       </div>
     </>
   );
 };
 
 export default Bookmarks;
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const queryClient = new QueryClient();
+  const session = await unstable_getServerSession(
+    context.req,
+    context.res,
+    authOptions
+  );
+
+  const ID: string = session?.user.id;
+
+  await queryClient.prefetchQuery(["tags", ID], async () => {
+    await apiClient.get(`/tags/${ID}`);
+  });
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
+}

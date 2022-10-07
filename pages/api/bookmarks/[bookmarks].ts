@@ -19,6 +19,7 @@ export default async function handler(
     const twitterClient = new TwitterApi(ACCESS_TOKEN);
     console.log("access token type @dynamo", typeof ACCESS_TOKEN);
     console.log("using: ", maxResults);
+    console.log("expiry", token?.accessTokenExpires);
     const readOnlyClient = twitterClient.readOnly;
 
     try {
@@ -63,7 +64,7 @@ export default async function handler(
         };
       });
 
-      // console.log("response", returnResponse);
+      console.log("nextToken:", { nextToken: bookmarks.meta.next_token });
       return res.json({
         data: returnResponse,
         count: bookmarks.meta.result_count,

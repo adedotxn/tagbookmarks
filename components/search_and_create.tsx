@@ -1,5 +1,6 @@
 import { Button, Input, Text } from "@mantine/core";
 import { IconPlus, IconSearch } from "@tabler/icons";
+import { useRouter } from "next/router";
 import React, { ChangeEvent } from "react";
 import { bookmarkPageStyle } from "./styles/style";
 import TagSelect from "./tagSelect";
@@ -26,6 +27,7 @@ const SearchAndCreate = ({
   value,
 }: SearchAndCreateInterface) => {
   const { classes } = bookmarkPageStyle();
+  const { pathname } = useRouter();
 
   return (
     <>
@@ -46,9 +48,11 @@ const SearchAndCreate = ({
             />
           </div>
 
-          <div className={classes.tagSelect}>
-            <TagSelect value={value} setValue={setValue} />
-          </div>
+          {pathname.includes("tagged") && (
+            <div className={classes.tagSelect}>
+              <TagSelect value={value} setValue={setValue} />
+            </div>
+          )}
 
           <div>
             <Button

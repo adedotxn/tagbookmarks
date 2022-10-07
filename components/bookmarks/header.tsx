@@ -8,81 +8,87 @@ import { useState } from "react";
 import { headerStyle } from "../styles/header";
 
 const BookmarksPageHeader = () => {
+  /** States */
+  const [openedDrawer, setOpenedDrawer] = useState(false);
+  const burgerTitle = openedDrawer ? "Close Sidebar" : "Open Sidebar";
+
+  /**  Fetching / Getting */
   const { classes } = headerStyle();
   const matches = useMediaQuery("(min-width: 768px)", true, {
     getInitialValueInEffect: false,
   });
-  const [openedDrawer, setOpenedDrawer] = useState(false);
-  const router = useRouter();
-  const burgerTitle = openedDrawer ? "Close Sidebar" : "Open Sidebar";
+  const { pathname, push } = useRouter();
   const { data: session } = useSession();
+
   return (
     <>
       <header className={classes.header}>
-        <div className={classes.avi}>
-          {matches ? (
+        {!pathname.includes("tagged") && matches && (
+          <div className={classes.avi}>
             <Button
               color="gray"
               variant="default"
               compact
-              onClick={() => router.push("/tagged")}
+              onClick={() => push("/tagged")}
             >
               View tagged bookmark-tweets
             </Button>
-          ) : (
-            <>
-              <Burger
-                opened={openedDrawer}
-                onClick={() => setOpenedDrawer(true)}
-                title={burgerTitle}
+          </div>
+        )}
+
+        {!matches && (
+          <div className={classes.avi}>
+            <Burger
+              opened={openedDrawer}
+              onClick={() => setOpenedDrawer(true)}
+              title={burgerTitle}
+            />
+          </div>
+        )}
+
+        <Drawer
+          size="sm"
+          position="bottom"
+          opened={openedDrawer}
+          onClose={() => setOpenedDrawer(false)}
+        >
+          <Box>
+            <Link href="/" passHref>
+              <NavLink
+                icon={<IconHome />}
+                variant="light"
+                label="Go back to homepage"
+                color="gray"
+                active={pathname === "/"}
               />
-            </>
-          )}
+            </Link>
+            <Link href={`bookmarks/${session?.user?.name}`} passHref>
+              <NavLink
+                icon={<IconBrandTwitter />}
+                variant="light"
+                label="Twitter bookmarks page"
+                color="blue"
+                active={pathname === `/test`}
+              />
+            </Link>
+            <Link href="/tagged" passHref>
+              <NavLink
+                icon={<IconTag />}
+                variant="light"
+                label="View tagged bookmark-tweets"
+                color="gray"
+                active={pathname === "/tagged"}
+              />
+            </Link>
+          </Box>
+        </Drawer>
 
-          <Drawer
-            size="sm"
-            position="bottom"
-            opened={openedDrawer}
-            onClose={() => setOpenedDrawer(false)}
-          >
-            <Box>
-              <Link href="/" passHref>
-                <NavLink
-                  icon={<IconHome />}
-                  variant="light"
-                  label="Go back to homepage"
-                  color="gray"
-                  active={router.pathname === "/"}
-                />
-              </Link>
-              <Link href={`bookmarks/${session?.user?.name}`} passHref>
-                <NavLink
-                  icon={<IconBrandTwitter />}
-                  variant="light"
-                  label="Twitter bookmarks page"
-                  color="blue"
-                  active={router.pathname === `/test`}
-                />
-              </Link>
-              <Link href="/tagged" passHref>
-                <NavLink
-                  icon={<IconTag />}
-                  variant="light"
-                  label="View tagged bookmark-tweets"
-                  color="gray"
-                  active={router.pathname === "/tagged"}
-                />
-              </Link>
-            </Box>
-          </Drawer>
-        </div>
-
-        <h1>Bkmrked</h1>
+        <h1>Bkmrkd</h1>
 
         {matches && (
           <div>
             <Button
-              onClick={() => router.push("/")}
+              onClick={() => push("/")}
               variant="default"
               color="gray"
               compact

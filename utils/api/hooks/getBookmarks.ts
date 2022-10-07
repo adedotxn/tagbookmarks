@@ -11,8 +11,14 @@ export const userBkmrks = async () => {
   return fetch.data;
 };
 
-export const useBookmarks = () => {
-  return useQuery(["Bookmarks"], () => apiClient.get(`/twitter/bookmarks`));
+export const useBookmarks = (startSearch: boolean) => {
+  return (
+    useQuery(["Bookmarks"], () => apiClient.get(`/twitter/bookmarks`)),
+    {
+      retry: 4,
+      enabled: startSearch,
+    }
+  );
 };
 
 export const userNumberedBookmarks = async (maxResults: number) => {

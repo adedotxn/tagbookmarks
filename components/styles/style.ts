@@ -18,6 +18,8 @@ export const bookmarkPageStyle = createStyles((theme, _params, getRef) => ({
         width: "90vw",
         display: "flex",
         justifyContent: "space-around",
+        alignItems: "center",
+        placeItems: "center",
       },
 
       [`& .${getRef("search")}`]: {
@@ -26,6 +28,13 @@ export const bookmarkPageStyle = createStyles((theme, _params, getRef) => ({
           marginBottom: ".6rem",
         },
       },
+
+      // [`& .${getRef("tagged_prompt")}`]: {
+      //   [`& div:first-child`]: {
+      //     width: "40vw",
+      //     border: "2px solid red",
+      //   },
+      // },
     },
   },
 
@@ -145,6 +154,18 @@ export const bookmarkPageStyle = createStyles((theme, _params, getRef) => ({
     label: {
       fontWeight: 700,
       paddingBlock: ".3rem",
+    },
+  },
+
+  tagged_prompt: {
+    ref: getRef("tagged_prompt"),
+    display: "grid",
+    placeItems: "center",
+    // height: "70vw",
+    marginTop: "40vh",
+
+    [`& > div:first-child`]: {
+      width: "80vw",
     },
   },
 }));

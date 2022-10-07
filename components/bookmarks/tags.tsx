@@ -1,4 +1,4 @@
-import { Badge } from "@mantine/core";
+import { Badge, Loader } from "@mantine/core";
 import { useQueries } from "@tanstack/react-query";
 import apiClient from "../../utils/api/http-config";
 
@@ -35,7 +35,9 @@ const TagBadge = ({ tweepId, tweetId }: TagBadgeInterface): JSX.Element => {
   if (isLoading) {
     return (
       <div>
-        <p>tags are loading...</p>
+        <p>
+          <Loader variant="dots" /> tags are loading...
+        </p>
       </div>
     );
   }

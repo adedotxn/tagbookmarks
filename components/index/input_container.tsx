@@ -1,5 +1,5 @@
 import { Button, Group, Input, Loader, Title, Tooltip } from "@mantine/core";
-import { IconAlertCircle, IconNumber } from "@tabler/icons";
+import { IconAlertCircle, IconNumber, IconX } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -28,6 +28,7 @@ const InputContainer = () => {
   const [noOfBookmarks, setNumberOfBookmarks] = useState<number>(2);
   const [errorMessage, setErrorMessage] = useState("");
   const [startSearch, setStartSearch] = useState(false);
+  /*const [getAll, setGetAll] = useState(false);*/
   const { activeBookmarks, setActiveBookmarks } = useActiveBookmarks();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -46,7 +47,7 @@ const InputContainer = () => {
     ["Bookmarks", noOfBookmarks],
     async () => {
       const fetch = await apiClient.get(`/bookmarks/${noOfBookmarks}`);
-      console.log("fetch.data --- ", fetch.data);
+      console.log("fetch.data --- ", fetch);
       return fetch.data;
     },
     {
@@ -54,6 +55,43 @@ const InputContainer = () => {
       enabled: startSearch,
     }
   );
+
+  const initiateSearch = () => {
+    if (noOfBookmarks === (undefined || NaN)) {
+      return alert("number is undefined or is not a valid number, ");
+    }
+    setStartSearch(true);
+  };
+
+  /*
+  const {
+    isLoading: allIsLoading,
+    isError: allIsError,
+    data: allBookmarks,
+    error: allError,
+    isFetching: allIsFetching,
+    fetchStatus: allFetchStatus,
+  } = useQuery(
+    [" all Bookmarks"],
+    async () => {
+      const fetch = await apiClient.get(`/twitter/bookmarks`);
+      console.log("all", fetch);
+      return fetch.data;
+    },
+    {
+      retry: 4,
+      enabled: getAll,
+    }
+  );
+
+  const initiateGetAll = () => {
+    if (startSearch) {
+      setStartSearch(false);
+    }
+
+    setGetAll(true);
+  };
+  */
 
   !isLoading &&
     !isFetching &&
@@ -79,11 +117,14 @@ const InputContainer = () => {
     }
   }, [isError]);
 
-  const initiateSearch = () => {
-    if (noOfBookmarks === (undefined || NaN)) {
-      return alert("number is undefined or is not a valid number, ");
+  useEffect(() => {
+    if (!isLoading) {
+      setStartSearch(false);
     }
-    setStartSearch(true);
+  }, [isLoading, returnedBookmarks]);
+
+  const stopSearch = () => {
+    setStartSearch(false);
   };
 
   if (isError) {
@@ -120,7 +161,8 @@ const InputContainer = () => {
             className="input-demo"
             withAsterisk
             label="Twitter Bookmarks to Fetch"
-            description="Please enter a number between 1 and 50. Fetched bookmarks may exceed this number though"
+            description="Please enter a number between 1 and 50. Fetched bookmarks may exceed or subceed this number though
+            - It's a twitter thing"
             error={errorMessage}
           >
             <Input
@@ -155,6 +197,9 @@ const InputContainer = () => {
             startSearch={startSearch}
             fetchStatus={fetchStatus}
           />
+          {/* <Button onClick={initiateGetAll}>
+            Fetch all bookmarks from Twitter
+          </Button> */}
         </div>
 
         <div className={classes.defaults}>
@@ -167,10 +212,31 @@ const InputContainer = () => {
               </>
             ) : (
               <>
-                {startSearch && fetchStatus === "fetching" ? (
-                  <Button style={{ display: "grid", placeItems: "center" }}>
-                    <Loader color="white" size={20} mr={20} />
-                  </Button>
+                {startSearch && fetchStatus == "fetching" ? (
+                  <div
+                    style={{
+                      display: "flex",
+                      placeItems: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Button style={{ display: "grid", placeItems: "center" }}>
+                      <Loader variant="dots" color="white" size={30} />
+                    </Button>
+                    <div
+                      onClick={stopSearch}
+                      style={{
+                        marginLeft: "1rem",
+                        border: "1.5px solid red",
+                        display: "grid",
+                        placeItems: "center",
+                        borderRadius: ".2rem",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <IconX color="red" />
+                    </div>
+                  </div>
                 ) : (
                   <Button disabled>
                     Waiting for your commmand milord/lady

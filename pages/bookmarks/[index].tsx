@@ -8,36 +8,24 @@ import SearchAndCreate from "../../components/search_and_create";
 import { bookmarkPageStyle } from "../../components/styles/style";
 import { useActiveBookmarks } from "../../utils/context";
 
-// interface tagInterface {
-//   label: string;
-//   value: string;
-// }
-
 const Bookmarks = () => {
+  /** States */
+  const [search, setSearch] = useState<string>("");
+  const [openModal, setOpenModal] = useState(false);
+  const { activeBookmarks } = useActiveBookmarks();
+
+  /**  Fetching / Getting */
   const { classes } = bookmarkPageStyle();
-  // const [tagModal, setTagModal] = useState<string>("");
-
-  // const tagInitialValues = [
-  //   { value: "important", label: "Important" },
-  //   { value: "funny", label: "Funny" },
-  // ];
-
-  // const [tags, setTags] = useState<tagInterface[]>(tagInitialValues);
-
   const { data: session } = useSession();
+
+  /** Effects */
   useEffect(() => {
     if (session?.error === "RefreshAccessTokenError") {
       signIn(); // Force sign in to hopefully resolve error
     }
   }, [session]);
 
-  const [search, setSearch] = useState<string>("");
-
-  const [openModal, setOpenModal] = useState(false);
-
-  const { activeBookmarks } = useActiveBookmarks();
-  // const userId: string = session?.user?.id;
-
+  /** Component Conditional Rendering */
   if (session) {
     return (
       <div className={classes.wrapper}>

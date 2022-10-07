@@ -6,16 +6,19 @@ import InputContainer from "../components/index/input_container";
 import { indexPageStyle } from "../components/styles/index_style";
 
 const Home = () => {
+  /**  Fetching / Getting */
   const { classes } = indexPageStyle();
   const { data: session } = useSession();
 
+  /** Effects */
   useEffect(() => {
     if (session?.error === "RefreshAccessTokenError") {
       signIn(); // Force sign in to hopefully resolve error
     }
-    console.log("Session", session);
+    // console.log("Session", session);
   }, [session]);
 
+  /** Component Conditional Rendering */
   return (
     <div className={classes.container}>
       <header className={classes.header}>

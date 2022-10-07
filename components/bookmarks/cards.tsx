@@ -23,18 +23,22 @@ export interface DataInterface {
 }
 
 const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
+  /** States */
+  const [tagId, setTagId] = useState("");
   const [debounced] = useDebouncedValue(search, 200);
+
+  /**  Fetching / Getting */
+  const { data: session } = useSession();
   const { classes } = cardStyle();
   const router = useRouter();
-  const [tagId, setTagId] = useState("");
-  const { data: session } = useSession();
-  const userId: string = session?.user?.id;
+  const USER_ID: string = session?.user?.id;
+
   const {
     data: allTags,
     isLoading: tagsLoading,
     isError: isTagError,
     error: tagError,
-  } = useTags(userId);
+  } = useTags(USER_ID);
   console.log("alltags", allTags);
   console.log("isError", isTagError);
   console.log("error", tagError);
@@ -117,7 +121,7 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
                   </Group>
 
                   {router.pathname.includes("bookmarks") && (
-                    <TagBadge tweepId={userId} tweetId={data.id} />
+                    <TagBadge tweepId={USER_ID} tweetId={data.id} />
                   )}
                 </Card.Section>
               </Card>
@@ -126,7 +130,7 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
               {/* <TweetEmbed tweetId={data.id} /> */}
 
               <AddtagModal
-                userId={userId}
+                userId={USER_ID}
                 tagId={tagId}
                 dataId={data.id}
                 setTagId={setTagId}

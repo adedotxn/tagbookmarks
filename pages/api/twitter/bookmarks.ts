@@ -17,7 +17,6 @@ export default async function handler(
     console.log("access token type", typeof ACCESS_TOKEN);
     const readOnlyClient = twitterClient.readOnly;
 
-    let nextToken;
     try {
       const bookmarks = await readOnlyClient.v2.bookmarks({
         expansions: ["referenced_tweets.id"],
@@ -28,32 +27,26 @@ export default async function handler(
           "in_reply_to_user_id",
           "author_id",
         ],
-        max_results: 10,
       });
-
-      let meta = bookmarks.meta;
-      console.log("meta", bookmarks.meta);
 
       let allBookmarks: TweetV2[] = [];
 
       for await (const bookmark of bookmarks) {
         allBookmarks = [...allBookmarks, bookmark];
       }
-      console.log("loop? : done");
 
       let tweeps: any[] = [];
 
-      console.log("map1?");
+      // console.log("map1?");
       allBookmarks.map((tweet) => {
         if (tweet !== undefined) {
           tweeps = [...tweeps, tweet?.author_id];
         }
       });
-      console.log("map1? : done");
+      // console.log("map1? : done");
 
       const users = await readOnlyClient.v2.users(tweeps);
 
-      console.log("map2?");
       const returnResponse = allBookmarks.map((tweet, idx) => {
         return {
           name: users.data[idx].name,
@@ -65,16 +58,14 @@ export default async function handler(
           attachments: tweet.attachments,
         };
       });
-      console.log("map2? : done");
 
-      console.log("response", returnResponse);
       return res.json({
         data: returnResponse,
         token: bookmarks.meta,
       });
     } catch (error) {
       return res
-        .status(400)
+        .status(error.code)
         .json({ status: error, message: "Error in getting bookmarks" });
     }
   } else {

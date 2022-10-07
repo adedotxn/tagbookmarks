@@ -30,28 +30,7 @@ export const authOptions: NextAuthOptions = {
       account?: Account;
       user?: User;
     }) {
-      // const provider = account?.provider !== undefined ? account.provider : "";
-
-      // if (provider && !token[provider]) {
-      //   token["twitter"] = {};
-      // }
-
-      // if (account?.access_token) {
-      //   token["twitter"].accessToken = account?.access_token!;
-      // }
-      // if (account?.refresh_token) {
-      //   token["twitter"].refreshToken = account?.refresh_token!;
-      // }
-
-      // if (user?.id) {
-      //   token["twitter"].userId = user?.id;
-      // }
-      // if (account?.expires_at) {
-      //   token["twitter"].expires = account?.expires_at;
-      // }
-
       if (account && user) {
-        console.log("User found");
         return {
           accessToken: account.access_token,
           accessTokenExpires: Date.now() + account.expires_at! * 1000,
@@ -64,8 +43,6 @@ export const authOptions: NextAuthOptions = {
       if (Date.now() < token.accessTokenExpires!) {
         return token;
       }
-
-      console.log("final token?", token);
 
       // Access token has expired, try to update it
       return refreshAccessToken(token);
