@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../../db/connect";
 import Collection from "../../../../db/models/collection";
-import User from "../../../../db/models/user";
+import DBUser from "../../../../db/models/user";
 import { CollectionInterface } from "../../../../utils/interface/collection.interface";
 import { UserInterface } from "../../../../utils/interface/user.interface";
 
@@ -27,7 +27,7 @@ export default async function handler(
 
     const tweepId = req.query.id as string;
 
-    const userExists: UserInterface[] = await User.find({ tweepId });
+    const userExists: UserInterface[] = await DBUser.find({ tweepId });
     if (userExists.length === 0) {
       return res
         .status(404)
@@ -37,7 +37,7 @@ export default async function handler(
     if (userExists[0].userTags !== undefined) {
       const temp: string[] = [].concat(...[...userExists[0].userTags, tag]);
       const tagUpdates = [...new Set(temp)];
-      await User.updateOne(
+      await DBUser.updateOne(
         { tweepId },
         {
           userTags: tagUpdates,

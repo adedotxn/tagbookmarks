@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../db/connect";
-import User from "../../../db/models/user";
+import DBUser from "../../../db/models/user";
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,7 +15,7 @@ export default async function handler(
     await connect();
     console.log(".user/[id]");
 
-    const data = await User.find({ tweepId });
+    const data = await DBUser.find({ tweepId });
 
     if (data.length !== 0) {
       return res.status(200).json({ data });

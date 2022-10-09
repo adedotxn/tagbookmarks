@@ -25,6 +25,7 @@ const validate = (
 const InputContainer = () => {
   const { classes } = indexPageStyle();
   const { data: session } = useSession();
+  const USER_ID = session?.user.id;
   const [noOfBookmarks, setNumberOfBookmarks] = useState<number>(2);
   const [errorMessage, setErrorMessage] = useState("");
   const [startSearch, setStartSearch] = useState(false);
@@ -46,7 +47,9 @@ const InputContainer = () => {
   } = useQuery(
     ["Bookmarks", noOfBookmarks],
     async () => {
-      const fetch = await apiClient.get(`/bookmarks/${noOfBookmarks}`);
+      const fetch = await apiClient.get(
+        `/bookmarks/${USER_ID}/${noOfBookmarks}`
+      );
       console.log("fetch.data --- ", fetch);
       return fetch.data;
     },

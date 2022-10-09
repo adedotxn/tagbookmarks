@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import apiClient from "../http-config";
+import { axiosApiInstance } from "../interceptor";
 
 export interface createInterface {
   tweepId: string;
@@ -13,7 +14,7 @@ export const userBkmrks = async () => {
 
 export const useBookmarks = (startSearch: boolean) => {
   return (
-    useQuery(["Bookmarks"], () => apiClient.get(`/twitter/bookmarks`)),
+    useQuery(["Bookmarks"], () => axiosApiInstance.get(`/twitter/bookmarks`)),
     {
       retry: 4,
       enabled: startSearch,

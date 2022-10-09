@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../db/connect";
-import User from "../../../db/models/user";
+import DBUser from "../../../db/models/user";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +16,7 @@ export default async function handler(
     console.log("/create/tags");
 
     const { id: _id, tag } = req.body; //_id given by mongoDB
-    const data = await User.findById(_id);
+    const data = await DBUser.findById(_id);
 
     //spread tags into userTags, creates a 2D array, flatten the array with [].concar(...arr)
     data.userTags = [].concat(...[...data.userTags, tag]);

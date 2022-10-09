@@ -23,7 +23,8 @@
     "./types/next-auth.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "__tests__/*.ts"
+    "__tests__/*.ts",
+    "db/adapter.js"
   ],
 
   "exclude": ["node_modules"]

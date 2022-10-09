@@ -1,9 +1,15 @@
 import NextAuth, { Account, NextAuthOptions, User } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import TwitterProvider from "next-auth/providers/twitter";
-import { refreshAccessToken } from "../../../utils/api/refreshToken";
+// import clientPromise from "../../../db/adapter";
+import connect from "../../../db/connect";
+import DBUser from "../../../db/models/user";
+
+import { refreshAccessTokenNext } from "../../../utils/api/refreshToken";
+import { UserInterface } from "../../../utils/interface/user.interface";
 
 export const authOptions: NextAuthOptions = {
+  // adapter: MongoDBAdapter(clientPromise),
   providers: [
     TwitterProvider({
       clientId: process.env.CLIENT_ID!,
@@ -45,7 +51,7 @@ export const authOptions: NextAuthOptions = {
       }
 
       // Access token has expired, try to update it
-      return refreshAccessToken(token);
+      return refreshAccessTokenNext(token);
     },
     async session({ session, token }) {
       session["user"].id = token?.user?.id;
@@ -53,8 +59,40 @@ export const authOptions: NextAuthOptions = {
       session["user"].name = token?.user?.name;
       session.accessToken = token.accessToken;
       session.error = token.error;
+      session.refreshToken = token.refreshToken;
 
       return session;
+    },
+    async signIn({ user, account, profile, email, credentials }) {
+      console.log("signIn", { user, account, credentials, profile, email });
+
+      try {
+        await connect();
+        const userExists = await DBUser.find({ tweepId: user?.id });
+        console.log("signIn-CB -- UserExists");
+
+        if (userExists.length >= 1) {
+          userExists[0].accessToken = account?.access_token;
+          userExists[0].refreshToken = account?.refresh_token;
+          userExists[0].save();
+          return true;
+        }
+
+        const saveUser = new DBUser<UserInterface>({
+          tweepId: user?.id,
+          userTags: [],
+          refreshToken: account?.refresh_token,
+          accessToken: account?.access_token,
+        });
+
+        await saveUser.save();
+
+        return true;
+      } catch (error) {
+        console.log("Sign in callback error", error);
+      }
+
+      return false;
     },
   },
   secret: process.env.NEXTAUTH_SECRET || "123",

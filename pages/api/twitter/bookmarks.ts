@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { TwitterApiAutoTokenRefresher } from "@twitter-api-v2/plugin-token-refresher";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 import { TweetV2, TwitterApi } from "twitter-api-v2";
@@ -9,12 +10,34 @@ export default async function handler(
 ) {
   // const session = await getSession({ req });
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  const credentials = {
+    clientId: "<oauth2 client ID>",
+    clientSecret: "<oauth2 client secret>",
+  };
+  // Obtained first through OAuth2 auth flow
+  const tokenStore = { accessToken: "", refreshToken: "" };
+
+  const autoRefresherPlugin = new TwitterApiAutoTokenRefresher({
+    refreshToken: tokenStore.refreshToken,
+    refreshCredentials: credentials,
+    onTokenUpdate(token) {
+      tokenStore.accessToken = token.accessToken;
+      tokenStore.refreshToken = token.refreshToken!;
+      // store in DB/Redis/...
+    },
+    onTokenRefreshError(error) {
+      console.error("Refresh error", error);
+    },
+  });
+
   const ACCESS_TOKEN: string =
     token?.accessToken !== undefined ? token.accessToken : "";
 
   if (ACCESS_TOKEN !== undefined || "") {
-    const twitterClient = new TwitterApi(ACCESS_TOKEN);
-    console.log("access token type", typeof ACCESS_TOKEN);
+    const twitterClient = new TwitterApi(tokenStore.accessToken, {
+      plugins: [autoRefresherPlugin],
+    });
+    console.log("access token", typeof tokenStore.accessToken);
     const readOnlyClient = twitterClient.readOnly;
 
     try {

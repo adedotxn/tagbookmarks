@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../db/connect";
-import User from "../../../db/models/user";
+import DBUser from "../../../db/models/user";
 import { UserInterface } from "../../../utils/interface/user.interface";
 
 export default async function handler(
@@ -12,7 +12,7 @@ export default async function handler(
     await connect();
     // logger.info("/tags/all");
 
-    const data: UserInterface[] = await User.find({}).sort({ time: -1 });
+    const data: UserInterface[] = await DBUser.find({}).sort({ time: -1 });
 
     const tags = data.map((e) => {
       return e.userTags;

@@ -11,7 +11,9 @@ const UserSchema = new Schema<UserInterface>({
     type: [String],
     default: [],
   },
+  refreshToken: { type: String, default: "" },
+  accessToken: { type: String, default: "" },
 });
 
-const User = models.User || model("User", UserSchema);
-export default User;
+const DBUser = models.User || model("User", UserSchema);
+export default DBUser;

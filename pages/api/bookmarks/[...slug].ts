@@ -1,25 +1,30 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getToken } from "next-auth/jwt";
 import { TweetV2, TwitterApi } from "twitter-api-v2";
+import connect from "../../../db/connect";
+import DBUser from "../../../db/models/user";
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { bookmarks: number } = req.query;
+  const slug = req.query.slug as string[];
+  const tweepId = slug[0];
+  const number = slug[1];
   let maxResults: number = +number!;
 
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  const ACCESS_TOKEN: string =
-    token?.accessToken !== undefined ? token.accessToken : "";
+  await connect();
+  const userExists = await DBUser.find({ tweepId });
+  if (!userExists || userExists.length === 0) {
+    return res.status(404).json({ message: "User not found" });
+  }
+  const ACCESS_TOKEN = userExists[0].accessToken;
 
   if (ACCESS_TOKEN !== undefined || "") {
-    console.log("\n\taccess token type", ACCESS_TOKEN);
+    console.log("starting...");
     const twitterClient = new TwitterApi(ACCESS_TOKEN);
-    console.log("access token type @dynamo", typeof ACCESS_TOKEN);
-    console.log("using: ", maxResults);
-    console.log("expiry", token?.accessTokenExpires);
+    console.log("\t{ access token", ACCESS_TOKEN);
+
     const readOnlyClient = twitterClient.readOnly;
 
     try {

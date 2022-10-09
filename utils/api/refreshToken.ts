@@ -1,6 +1,8 @@
 // https://twitter.com/i/oauth2/authorize
 
-export async function refreshAccessToken(token: any) {
+import axios from "axios";
+
+export async function refreshAccessTokenNext(token: any) {
   try {
     const url =
       "https://twitter.com/i/oauth2/authorize?" +
@@ -39,3 +41,59 @@ export async function refreshAccessToken(token: any) {
     };
   }
 }
+
+// https://twitter.com/i/oauth2/authorize
+
+export async function refreshAccessToken() {
+  try {
+    const refreshToken = await axios.get("api/refresh");
+
+    const response = await axios.post(
+      "https://api.twitter.com/2/oauth2/token",
+      new URLSearchParams({
+        refresh_token: refreshToken.data,
+        grant_type: "refresh_token",
+        client_id: process.env.CLIENT_ID!,
+      }),
+      {
+        headers: {
+          "Access-Control-Allow-Origin": "http://localhost:3000",
+        },
+      }
+    );
+
+    console.log("interceptor response", response);
+  } catch (error) {
+    console.log("interceptor error", error);
+
+    return {
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
+
+export const axiosRefreshAccessToken = (refresh: string | undefined) => {
+  return new Promise((resolve, reject) => {
+    axios
+      .post(
+        "https://api.twitter.com/2/oauth2/token/",
+        new URLSearchParams({
+          refresh_token: refresh!,
+          grant_type: "refresh_token",
+        }),
+        {
+          headers: {
+            Authorization: `Basic ${process.env.NEXT_PUBLIC_BEARER_TOKEN}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Access-Control-Allow-Origin": "*",
+          },
+        }
+      )
+      .then((response) => {
+        console.log("promise intercepy", response);
+      })
+      .catch((error) => {
+        console.log("pInter Err", error);
+      });
+  });
+};

@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 import connect from "../../../../db/connect";
-import User from "../../../../db/models/user";
+import DBUser from "../../../../db/models/user";
 import { UserInterface } from "../../../../utils/interface/user.interface";
 
 export default async function handler(
@@ -21,12 +21,12 @@ export default async function handler(
 
     console.log({ user: tweepId, userTags });
 
-    const userExists = await User.find({ tweepId });
+    const userExists = await DBUser.find({ tweepId });
 
     if (userExists.length >= 1) {
       const temp = [].concat(...[...userExists[0].userTags, userTags]);
       const update = [...new Set(temp)]; //remove duplicates
-      await User.updateOne(
+      await DBUser.updateOne(
         { tweepId },
         {
           userTags: update,
@@ -39,7 +39,7 @@ export default async function handler(
       });
     }
 
-    const saveUser = new User<UserInterface>({
+    const saveUser = new DBUser<UserInterface>({
       tweepId,
       userTags,
     });

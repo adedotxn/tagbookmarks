@@ -1,9 +1,9 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getToken } from "next-auth/jwt";
 import { TweetV2, TwitterApi } from "twitter-api-v2";
 import connect from "../../../db/connect";
 import Collection from "../../../db/models/collection";
+import DBUser from "../../../db/models/user";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +16,12 @@ export default async function handler(
     const { id: tweepId } = req.query;
     await connect();
     console.log(`/tags/${tweepId}`);
-    console.log("sdsd", { tweepId });
+
+    const userExists = await DBUser.find({ tweepId });
+    if (!userExists || userExists.length === 0) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log("got user");
 
     const data = await Collection.find({ tweepId }).sort({
       time: -1,
@@ -28,10 +33,12 @@ export default async function handler(
     });
     console.log("got tweet ids");
 
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    const ACCESS_TOKEN: string =
-      token?.accessToken !== undefined ? token.accessToken : "";
-    console.log("token is available");
+    // const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    // const ACCESS_TOKEN: string =
+    //   token?.accessToken !== undefined ? token.accessToken : "";
+    // console.log("token is available");
+
+    const ACCESS_TOKEN = userExists[0].accessToken;
 
     if (ACCESS_TOKEN !== undefined || "") {
       console.log("\taccess token type", ACCESS_TOKEN);
