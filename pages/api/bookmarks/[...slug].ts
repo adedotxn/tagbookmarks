@@ -1,4 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { TwitterApiAutoTokenRefresher } from "@twitter-api-v2/plugin-token-refresher";
+import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { TweetV2, TwitterApi } from "twitter-api-v2";
 import connect from "../../../db/connect";
@@ -19,18 +21,72 @@ export default async function handler(
     return res.status(404).json({ message: "User not found" });
   }
   const ACCESS_TOKEN = userExists[0].accessToken;
+  const REFRESH_TOKEN = userExists[0].refreshToken;
+
+  const toCompare = {
+    accessToken: ACCESS_TOKEN,
+    refreshToken: REFRESH_TOKEN,
+  };
+
+  const credentials = {
+    clientId: process.env.CLIENT_ID!,
+    clientSecret: process.env.CLIENT_SECRET!,
+  };
+  // Obtained first through OAuth2 auth flow
+  const tokenStore = {
+    accessToken: ACCESS_TOKEN,
+    refreshToken: REFRESH_TOKEN,
+  };
+
+  const autoRefresherPlugin = new TwitterApiAutoTokenRefresher({
+    refreshToken: tokenStore.refreshToken,
+    refreshCredentials: credentials,
+    onTokenUpdate(token) {
+      console.log("Refresh Tokens");
+      tokenStore.accessToken = token.accessToken;
+      tokenStore.refreshToken = token.refreshToken!;
+      // store in DB/Redis/...
+    },
+    onTokenRefreshError(error) {
+      console.error("Refresh error", error);
+    },
+  });
 
   if (ACCESS_TOKEN !== undefined || "") {
-    console.log("starting...");
-    const twitterClient = new TwitterApi(ACCESS_TOKEN);
-    console.log("\t{ access token", ACCESS_TOKEN);
+    console.log("starting tC...");
+    // const temp = token?.accessToken!;
+    // const twitterClient = new TwitterApi(ACCESS_TOKEN);
+    const twitterClient = new TwitterApi(tokenStore.accessToken, {
+      plugins: [autoRefresherPlugin],
+    });
+    // const twitterClient = new TwitterApi({
+    //   clientId: process.env.CLIENT_ID!,
+    //   clientSecret: process.env.CLIENT_SECRET!,
+    // });
+
+    // let refreshToken = REFRESH_TOKEN;
+    // const {
+    //   client: refreshedClient,
+    //   accessToken,
+    //   refreshToken: newRefreshToken,
+    // } = await twitterClient.refreshOAuth2Token(refreshToken);
+    // console.log("\t{ access token", ACCESS_TOKEN);
 
     const readOnlyClient = twitterClient.readOnly;
 
     try {
-      const bookmarks = await readOnlyClient.v2.bookmarks({
+      console.log("Starting bookmark endpoint call...");
+      const bookmarks = await twitterClient.v2.bookmarks({
         expansions: ["referenced_tweets.id"],
-        "media.fields": ["duration_ms", "url"],
+        "media.fields": [
+          "duration_ms",
+          "url",
+          "type",
+          "media_key",
+          "width",
+          "height",
+          "preview_image_url",
+        ],
         "tweet.fields": [
           "created_at",
           "attachments",
@@ -45,7 +101,8 @@ export default async function handler(
       for await (const bookmark of bookmarks) {
         allBookmarks = [...allBookmarks, bookmark];
       }
-      // console.log("loop? : done");
+
+      // console.log("<><>", { allBookmarks });
 
       let tweeps: any[] = [];
 
@@ -70,16 +127,40 @@ export default async function handler(
       });
 
       console.log("nextToken:", { nextToken: bookmarks.meta.next_token });
-      return res.json({
+      return res.status(200).json({
         data: returnResponse,
         count: bookmarks.meta.result_count,
         nextToken: bookmarks.meta.next_token,
       });
     } catch (error) {
-      console.log("issue", { error });
-      return res
-        .status(error.code)
-        .json({ status: error, message: "Error in getting bookmarks" });
+      if (error.code === 401) {
+        console.log("401 ISSUE : ", error);
+
+        try {
+          console.log("bout to try", REFRESH_TOKEN);
+          const response = await axios(
+            "https://api.twitter.com/2/oauth2/token",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Basic ${process.env.CONF_HEADER}`,
+              },
+              data: `grant_type=refresh_token&refresh_token=${REFRESH_TOKEN}`,
+            }
+          );
+
+          console.log("sucesss", response);
+        } catch (error) {
+          console.log("err ref", error?.data);
+        }
+
+        return res
+          .status(error.code)
+          .json({ status: error, message: "Error in getting bookmarks" });
+      }
+
+      console.log("another issue", error);
     }
   } else {
     return res.status(400).json({ status: "Access Token not found" });

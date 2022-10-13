@@ -4,8 +4,8 @@ import TwitterProvider from "next-auth/providers/twitter";
 // import clientPromise from "../../../db/adapter";
 import connect from "../../../db/connect";
 import DBUser from "../../../db/models/user";
-
 import { refreshAccessTokenNext } from "../../../utils/api/refreshToken";
+
 import { UserInterface } from "../../../utils/interface/user.interface";
 
 export const authOptions: NextAuthOptions = {
@@ -21,9 +21,6 @@ export const authOptions: NextAuthOptions = {
           scope: "tweet.read users.read bookmark.read offline.access",
         },
       },
-      // token : {
-      //   url : "https://api.twitter.com/2/oauth2/token"
-      // }
     }),
   ],
   callbacks: {
@@ -53,19 +50,7 @@ export const authOptions: NextAuthOptions = {
       // Access token has expired, try to update it
       return refreshAccessTokenNext(token);
     },
-    async session({ session, token }) {
-      session["user"].id = token?.user?.id;
-      session["user"].image = token?.user?.image;
-      session["user"].name = token?.user?.name;
-      session.accessToken = token.accessToken;
-      session.error = token.error;
-      session.refreshToken = token.refreshToken;
-
-      return session;
-    },
-    async signIn({ user, account, profile, email, credentials }) {
-      console.log("signIn", { user, account, credentials, profile, email });
-
+    async signIn({ user, account }) {
       try {
         await connect();
         const userExists = await DBUser.find({ tweepId: user?.id });
@@ -90,9 +75,19 @@ export const authOptions: NextAuthOptions = {
         return true;
       } catch (error) {
         console.log("Sign in callback error", error);
+        return false;
       }
+    },
+    async session({ session, token }) {
+      // console.log("session callback", { token, session, user });
+      session["user"].id = token?.user.id;
+      session["user"].image = token?.user.image;
+      session["user"].name = token?.user.name;
+      // session.accessToken = token.accessToken;
+      session.error = token.error;
+      // session.refreshToken = token.refreshToken;
 
-      return false;
+      return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET || "123",

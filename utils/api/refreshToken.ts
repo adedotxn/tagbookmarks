@@ -72,28 +72,13 @@ export async function refreshAccessToken() {
   }
 }
 
-export const axiosRefreshAccessToken = (refresh: string | undefined) => {
-  return new Promise((resolve, reject) => {
-    axios
-      .post(
-        "https://api.twitter.com/2/oauth2/token/",
-        new URLSearchParams({
-          refresh_token: refresh!,
-          grant_type: "refresh_token",
-        }),
-        {
-          headers: {
-            Authorization: `Basic ${process.env.NEXT_PUBLIC_BEARER_TOKEN}`,
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Access-Control-Allow-Origin": "*",
-          },
-        }
-      )
-      .then((response) => {
-        console.log("promise intercepy", response);
-      })
-      .catch((error) => {
-        console.log("pInter Err", error);
-      });
-  });
+export const axiosRefreshAccessToken = async (refresh: string | undefined) => {
+  await axios("https://api.twitter.com/2/oauth2/token"),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: `grant_type=refresh_token&refresh_token=${refresh}&client_id=${process.env.NEXT_PUBLIC_CLIENT_ID}`,
+    };
 };
