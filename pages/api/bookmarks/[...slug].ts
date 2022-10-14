@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
-import { TwitterApiAutoTokenRefresher } from "@twitter-api-v2/plugin-token-refresher";
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
+import { getToken } from "next-auth/jwt";
 import { TweetV2, TwitterApi } from "twitter-api-v2";
 import connect from "../../../db/connect";
 import DBUser from "../../../db/models/user";
@@ -14,8 +14,10 @@ export default async function handler(
   const tweepId = slug[0];
   const number = slug[1];
   let maxResults: number = +number!;
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
   await connect();
+  console.log("db connected");
   const userExists = await DBUser.find({ tweepId });
   if (!userExists || userExists.length === 0) {
     return res.status(404).json({ message: "User not found" });
@@ -23,54 +25,12 @@ export default async function handler(
   const ACCESS_TOKEN = userExists[0].accessToken;
   const REFRESH_TOKEN = userExists[0].refreshToken;
 
-  const toCompare = {
-    accessToken: ACCESS_TOKEN,
-    refreshToken: REFRESH_TOKEN,
-  };
-
-  const credentials = {
-    clientId: process.env.CLIENT_ID!,
-    clientSecret: process.env.CLIENT_SECRET!,
-  };
-  // Obtained first through OAuth2 auth flow
-  const tokenStore = {
-    accessToken: ACCESS_TOKEN,
-    refreshToken: REFRESH_TOKEN,
-  };
-
-  const autoRefresherPlugin = new TwitterApiAutoTokenRefresher({
-    refreshToken: tokenStore.refreshToken,
-    refreshCredentials: credentials,
-    onTokenUpdate(token) {
-      console.log("Refresh Tokens");
-      tokenStore.accessToken = token.accessToken;
-      tokenStore.refreshToken = token.refreshToken!;
-      // store in DB/Redis/...
-    },
-    onTokenRefreshError(error) {
-      console.error("Refresh error", error);
-    },
-  });
+  console.log("are access' equal", token?.accessToken === ACCESS_TOKEN);
+  console.log("are refresh equal", token?.refreshToken === REFRESH_TOKEN);
 
   if (ACCESS_TOKEN !== undefined || "") {
     console.log("starting tC...");
-    // const temp = token?.accessToken!;
-    // const twitterClient = new TwitterApi(ACCESS_TOKEN);
-    const twitterClient = new TwitterApi(tokenStore.accessToken, {
-      plugins: [autoRefresherPlugin],
-    });
-    // const twitterClient = new TwitterApi({
-    //   clientId: process.env.CLIENT_ID!,
-    //   clientSecret: process.env.CLIENT_SECRET!,
-    // });
-
-    // let refreshToken = REFRESH_TOKEN;
-    // const {
-    //   client: refreshedClient,
-    //   accessToken,
-    //   refreshToken: newRefreshToken,
-    // } = await twitterClient.refreshOAuth2Token(refreshToken);
-    // console.log("\t{ access token", ACCESS_TOKEN);
+    const twitterClient = new TwitterApi(ACCESS_TOKEN);
 
     const readOnlyClient = twitterClient.readOnly;
 
@@ -136,23 +96,34 @@ export default async function handler(
       if (error.code === 401) {
         console.log("401 ISSUE : ", error);
 
+        console.log(
+          "IN ERRORaccess' equal",
+          token?.accessToken === ACCESS_TOKEN
+        );
+        console.log(
+          "IN ERROR refresh equal?",
+          token?.refreshToken === REFRESH_TOKEN
+        );
+
         try {
           console.log("bout to try", REFRESH_TOKEN);
-          const response = await axios(
+          const response = await axios.post(
             "https://api.twitter.com/2/oauth2/token",
+            new URLSearchParams({
+              refresh_token: `${REFRESH_TOKEN}`,
+              grant_type: "refresh_token",
+            }),
             {
-              method: "POST",
               headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
                 Authorization: `Basic ${process.env.CONF_HEADER}`,
               },
-              data: `grant_type=refresh_token&refresh_token=${REFRESH_TOKEN}`,
             }
           );
 
           console.log("sucesss", response);
         } catch (error) {
-          console.log("err ref", error?.data);
+          console.log("err ref <><>", error);
         }
 
         return res

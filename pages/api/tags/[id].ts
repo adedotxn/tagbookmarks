@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { TwitterApiAutoTokenRefresher } from "@twitter-api-v2/plugin-token-refresher";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { TweetV2, TwitterApi } from "twitter-api-v2";
 import connect from "../../../db/connect";
@@ -37,13 +38,41 @@ export default async function handler(
     // const ACCESS_TOKEN: string =
     //   token?.accessToken !== undefined ? token.accessToken : "";
     // console.log("token is available");
-
     const ACCESS_TOKEN = userExists[0].accessToken;
+    const REFRESH_TOKEN = userExists[0].refreshToken;
+
+    const credentials = {
+      clientId: process.env.CLIENT_ID!,
+      clientSecret: process.env.CLIENT_SECRET!,
+    };
+
+    const tokenStore = {
+      accessToken: ACCESS_TOKEN,
+      refreshToken: REFRESH_TOKEN,
+    };
+
+    const autoRefresherPlugin = new TwitterApiAutoTokenRefresher({
+      refreshToken: tokenStore.refreshToken,
+      refreshCredentials: credentials,
+      onTokenUpdate(token) {
+        console.log("Refresh Tokens");
+        tokenStore.accessToken = token.accessToken;
+        tokenStore.refreshToken = token.refreshToken;
+        userExists[0].accessToken = token.accessToken;
+        userExists[0].refreshToken = token.refreshToken;
+        userExists[0].save();
+      },
+      onTokenRefreshError(error) {
+        console.error("Refresh error", error);
+      },
+    });
 
     if (ACCESS_TOKEN !== undefined || "") {
       console.log("\taccess token type", ACCESS_TOKEN);
-      const twitterClient = new TwitterApi(ACCESS_TOKEN);
-
+      // const twitterClient = new TwitterApi(ACCESS_TOKEN);
+      const twitterClient = new TwitterApi(tokenStore.accessToken, {
+        plugins: [autoRefresherPlugin],
+      });
       const readOnlyClient = twitterClient.readOnly;
       const alltweets = await readOnlyClient.v2.tweets(tweetIds, {
         "tweet.fields": [
@@ -78,6 +107,6 @@ export default async function handler(
       return res.status(200).json({ data: returned });
     }
   } catch (error) {
-    return res.status(404).json({ error, errorCode: error?.status.data });
+    return res.status(404).json({ error });
   }
 }

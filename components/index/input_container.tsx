@@ -1,7 +1,7 @@
 import { Button, Group, Input, Loader, Title, Tooltip } from "@mantine/core";
 import { IconAlertCircle, IconNumber, IconX } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { ChangeEvent, useEffect, useState } from "react";
 import apiClient from "../../utils/api/http-config";
@@ -131,6 +131,7 @@ const InputContainer = () => {
   };
 
   if (isError) {
+    console.log({ error });
     return (
       <section className={classes.errorComponent}>
         <div>
