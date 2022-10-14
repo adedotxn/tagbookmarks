@@ -12,10 +12,14 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
         secret: process.env.NEXTAUTH_SECRET,
       });
 
+      const REFRESH_TOKEN = token?.refreshToken;
+
+      console.log("got Token", REFRESH_TOKEN);
+
       const response = await axios.post(
         "https://api.twitter.com/2/oauth2/token",
         new URLSearchParams({
-          refresh_token: `${token?.refreshToken}`,
+          refresh_token: `${REFRESH_TOKEN}`,
           grant_type: "refresh_token",
         }),
         {
