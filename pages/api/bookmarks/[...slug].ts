@@ -15,6 +15,7 @@ export default async function handler(
   const number = slug[1];
   let maxResults: number = +number!;
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+  console.log("got Token", token?.refreshToken);
 
   await connect();
   console.log("db connected");
@@ -27,7 +28,6 @@ export default async function handler(
 
   console.log("are access' equal", token?.accessToken === ACCESS_TOKEN);
   console.log("are refresh equal", token?.refreshToken === REFRESH_TOKEN);
-
   if (ACCESS_TOKEN !== undefined || "") {
     console.log("starting tC...");
     const twitterClient = new TwitterApi(ACCESS_TOKEN);
