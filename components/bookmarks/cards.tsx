@@ -39,9 +39,6 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
     isError: isTagError,
     error: tagError,
   } = useTags(USER_ID);
-  console.log("alltags", allTags);
-  console.log("isError", isTagError);
-  console.log("error", tagError);
 
   const handleTagModal = (id: string) => {
     setTagId(id);

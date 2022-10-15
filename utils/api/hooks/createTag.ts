@@ -11,7 +11,7 @@ export const createEndpoint = (newTag: UserInterface) => {
   return apiClient.post("/user/create", newTag);
 };
 
-export const useCreate = () => {
+export const useCreate = (toast: any) => {
   const queryClient = useQueryClient();
 
   return useMutation(createEndpoint, {
@@ -20,9 +20,11 @@ export const useCreate = () => {
       queryClient.invalidateQueries(["alltags"]);
     },
     onSettled: (error, variable, context) => {
+      toast.success("Tag Created");
       console.log("settled?", { context });
     },
     onError: (error) => {
+      toast.error("Error Creating Tag");
       console.log({ error });
     },
   });

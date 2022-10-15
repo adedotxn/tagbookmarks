@@ -22,22 +22,15 @@ export default async function handler(
     if (!userExists || userExists.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
-    console.log("got user");
 
     const data = await Collection.find({ tweepId }).sort({
       time: -1,
     });
-    console.log("got data");
 
     const tweetIds: string[] = data.map((e) => {
       return e.tweetId;
     });
-    console.log("got tweet ids");
 
-    // const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    // const ACCESS_TOKEN: string =
-    //   token?.accessToken !== undefined ? token.accessToken : "";
-    // console.log("token is available");
     const ACCESS_TOKEN = userExists[0].accessToken;
     const REFRESH_TOKEN = userExists[0].refreshToken;
 
@@ -101,8 +94,6 @@ export default async function handler(
           tags: data[idx].tags,
         };
       });
-
-      console.log("returnrd is available");
 
       return res.status(200).json({ data: returned });
     }

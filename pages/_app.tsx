@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-query";
 import { SessionProvider } from "next-auth/react";
 import type { AppProps } from "next/app";
+import { Toaster } from "react-hot-toast";
 import "../styles/globals.css";
 import { UtilityProvider } from "../utils/context";
 
@@ -36,6 +37,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   loader: "bars",
                 }}
               >
+                <Toaster />
                 <Component {...pageProps} />
               </MantineProvider>
             </UtilityProvider>

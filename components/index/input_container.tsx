@@ -50,11 +50,11 @@ const InputContainer = () => {
       const fetch = await apiClient.get(
         `/bookmarks/${USER_ID}/${noOfBookmarks}`
       );
-      console.log("fetch.data --- ", fetch);
+      console.log("fetch.data --- ", fetch.status);
       return fetch.data;
     },
     {
-      retry: 4,
+      retry: 5,
       enabled: startSearch,
     }
   );
@@ -66,40 +66,10 @@ const InputContainer = () => {
     setStartSearch(true);
   };
 
-  /*
-  const {
-    isLoading: allIsLoading,
-    isError: allIsError,
-    data: allBookmarks,
-    error: allError,
-    isFetching: allIsFetching,
-    fetchStatus: allFetchStatus,
-  } = useQuery(
-    [" all Bookmarks"],
-    async () => {
-      const fetch = await apiClient.get(`/twitter/bookmarks`);
-      console.log("all", fetch);
-      return fetch.data;
-    },
-    {
-      retry: 4,
-      enabled: getAll,
-    }
-  );
-
-  const initiateGetAll = () => {
-    if (startSearch) {
-      setStartSearch(false);
-    }
-
-    setGetAll(true);
-  };
-  */
-
   !isLoading &&
     !isFetching &&
     !isError &&
-    console.log("returneddd in effect", activeBookmarks);
+    console.log("Boookmarks returned", activeBookmarks.length);
 
   useEffect(() => {
     !isLoading &&
@@ -164,9 +134,9 @@ const InputContainer = () => {
           <Input.Wrapper
             className="input-demo"
             withAsterisk
-            label="Twitter Bookmarks to Fetch"
-            description="Please enter a number between 1 and 50. Fetched bookmarks may exceed or subceed this number though
-            - It's a twitter thing"
+            label="Twitter Bookmarks to Fetch."
+            description="Please enter a number between 1 and 50. Fetched bookmarks may exceed or subceed this number though and also,
+             THIS MAY TAKE A WHILE."
             error={errorMessage}
           >
             <Input
@@ -179,7 +149,7 @@ const InputContainer = () => {
               placeholder="e.g 10"
               rightSection={
                 <Tooltip
-                  label="No of bookmarks to get"
+                  label="Number of bookmarks to get"
                   position="top-end"
                   withArrow
                   mb={20}

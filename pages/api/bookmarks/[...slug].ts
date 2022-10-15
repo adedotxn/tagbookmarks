@@ -36,25 +36,41 @@ export default async function handler(
 
     try {
       console.log("Starting bookmark endpoint call...");
-      const bookmarks = await twitterClient.v2.bookmarks({
-        expansions: ["referenced_tweets.id"],
-        "media.fields": [
-          "duration_ms",
-          "url",
-          "type",
-          "media_key",
-          "width",
-          "height",
-          "preview_image_url",
-        ],
-        "tweet.fields": [
-          "created_at",
-          "attachments",
-          "in_reply_to_user_id",
-          "author_id",
-        ],
-        max_results: maxResults,
-      });
+      let bookmarks;
+      if (slug.length === 1) {
+        console.log("get all bookmarks");
+        bookmarks = await readOnlyClient.v2.bookmarks({
+          expansions: ["referenced_tweets.id"],
+          "media.fields": ["duration_ms", "url"],
+          "tweet.fields": [
+            "created_at",
+            "attachments",
+            "in_reply_to_user_id",
+            "author_id",
+          ],
+        });
+      } else {
+        console.log(`get ${maxResults} bookmarks`);
+        bookmarks = await twitterClient.v2.bookmarks({
+          expansions: ["referenced_tweets.id"],
+          "media.fields": [
+            "duration_ms",
+            "url",
+            "type",
+            "media_key",
+            "width",
+            "height",
+            "preview_image_url",
+          ],
+          "tweet.fields": [
+            "created_at",
+            "attachments",
+            "in_reply_to_user_id",
+            "author_id",
+          ],
+          max_results: maxResults,
+        });
+      }
 
       let allBookmarks: TweetV2[] = [];
 
@@ -123,17 +139,17 @@ export default async function handler(
 
           console.log("sucesss", response);
         } catch (error) {
-          console.log("err ref <><>", error);
+          console.log("Error refreshing tokens", error);
+          res.json({ status: "Error refreshing token", message: error });
         }
-
+      } else {
+        console.log("Error getting bookmarks", error);
         return res
-          .status(error.code)
-          .json({ status: error, message: "Error in getting bookmarks" });
+          .status(404)
+          .json({ status: "Error getting bookmarks", message: error });
       }
-
-      console.log("another issue", error);
     }
   } else {
-    return res.status(400).json({ status: "Access Token not found" });
+    return res.status(404).json({ status: "Access Token not found" });
   }
 }

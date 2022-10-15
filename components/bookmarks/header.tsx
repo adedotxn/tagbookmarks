@@ -83,7 +83,7 @@ const BookmarksPageHeader = () => {
           </Box>
         </Drawer>
 
-        <h1>Bkmrkd</h1>
+        <h1>tagBookmarks</h1>
 
         {matches && (
           <div>

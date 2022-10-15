@@ -33,7 +33,7 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       console.log("cron response", response);
     } catch (error) {
       console.log("refresh error", error);
-      return res.status(405).json({ statusCode: 500, message: error });
+      return res.status(400).json({ statusCode: 500, message: error });
     }
   } else {
     res.setHeader("Allow", "POST");

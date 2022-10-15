@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 import { useState } from "react";
 import { useCreate } from "../../utils/api/hooks/createTag";
 import { bookmarkPageStyle } from "../styles/style";
+import toast from "react-hot-toast";
 
 interface CreateTagModalInterface {
   openModal: boolean;
@@ -15,21 +16,17 @@ const CreateTagModal = ({
 }: CreateTagModalInterface) => {
   const { classes } = bookmarkPageStyle();
   const [value, setValue] = useState<string>("");
-  const createMutation = useCreate();
+  const createMutation = useCreate(toast);
   const { data: session } = useSession();
   const userId: string = session?.user?.id;
-  // console.log("userId", userId);
 
   const onTagClose = (): any => {
     setOpenModal(false);
-    // const toSave = [...value];
-    // console.log("value to add", toSave);
 
     createMutation.mutate({
       tweepId: userId,
       userTags: value,
     });
-    console.log("done"), { value, userId };
   };
   return (
     <Modal

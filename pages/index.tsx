@@ -15,14 +15,13 @@ const Home = () => {
     if (session?.error === "RefreshAccessTokenError") {
       signIn(); // Force sign in to hopefully resolve error
     }
-    // console.log("Session", session);
   }, [session]);
 
   /** Component Conditional Rendering */
   return (
     <div className={classes.container}>
       <header className={classes.header}>
-        <Title order={2}>BKMRKD</Title>
+        <Title order={2}>tagBookmarks</Title>
         {session && (
           <Button onClick={() => signOut()} variant="default" color="gray">
             Log Out
@@ -52,8 +51,8 @@ const Home = () => {
           <>
             <section className={classes.outOfSession}>
               <Title className={classes.title_1} order={2}>
-                <span>Bkmrkd</span> can be used to search through your twitter
-                bookmarks.
+                <span>tagBookmarks</span> can be used to search through your
+                twitter bookmarks.
               </Title>
               <Title className={classes.title_2} order={2}>
                 Add <span>tags</span> to specific/special bookmarked tweets.

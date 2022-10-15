@@ -11,7 +11,7 @@ export const headerStyle = createStyles((theme, _params, getRef) => ({
 
     h1: {
       padding: 0,
-      textTransform: "uppercase",
+      // textTransform: "uppercase",
       fontSize: "1.5rem",
       background: theme.fn.gradient({
         from: "blue",

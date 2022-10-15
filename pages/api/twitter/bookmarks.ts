@@ -60,13 +60,11 @@ export default async function handler(
 
       let tweeps: any[] = [];
 
-      // console.log("map1?");
       allBookmarks.map((tweet) => {
         if (tweet !== undefined) {
           tweeps = [...tweeps, tweet?.author_id];
         }
       });
-      // console.log("map1? : done");
 
       const users = await readOnlyClient.v2.users(tweeps);
 

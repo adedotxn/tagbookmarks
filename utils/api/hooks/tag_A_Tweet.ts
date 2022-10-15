@@ -9,7 +9,7 @@ export const createEndpoint = (newTag: CollectionInterface) => {
   return apiClient.post(`/tags/addtag/${newTag.tweepId}`, newTag);
 };
 
-export const useAddTag = () => {
+export const useAddTag = (toast: any) => {
   const queryClient = useQueryClient();
 
   return useMutation(createEndpoint, {
@@ -20,6 +20,7 @@ export const useAddTag = () => {
       queryClient.invalidateQueries(["badgeTags"]);
     },
     onSettled: (error, variable, context) => {
+      toast.success("Tag Added");
       console.log("settled? ", { context });
     },
     onError: (error) => {
