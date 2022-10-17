@@ -1,20 +1,29 @@
 import { Button, Group, Modal, TextInput } from "@mantine/core";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import { useCreate } from "../../utils/api/hooks/createTag";
-import { bookmarkPageStyle } from "../styles/style";
 import toast from "react-hot-toast";
+import { useCreate } from "../../utils/api/hooks/createTag";
 
 interface CreateTagModalInterface {
   openModal: boolean;
   setOpenModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
+import { createStyles } from "@mantine/core";
+
+export const createTagComponentStyle = createStyles((_params) => ({
+  modal: {
+    button: {
+      marginTop: ".6rem",
+    },
+  },
+}));
+
 const CreateTagModal = ({
   openModal,
   setOpenModal,
 }: CreateTagModalInterface) => {
-  const { classes } = bookmarkPageStyle();
+  const { classes } = createTagComponentStyle();
   const [value, setValue] = useState<string>("");
   const createMutation = useCreate(toast);
   const { data: session } = useSession();

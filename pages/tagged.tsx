@@ -10,7 +10,7 @@ import ErrorComponent from "../components/bookmarks/error";
 import BookmarksPageHeader from "../components/bookmarks/header";
 import CreateTagModal from "../components/modal/create_tag_modal";
 import SearchAndCreate from "../components/search_and_create";
-import { bookmarkPageStyle } from "../components/styles/style";
+import { taggedPageStyle } from "../components/styles/taggedPage/tagged";
 import TaggedCards from "../components/tagged/cards";
 import { useTaggedGetter } from "../utils/api/hooks/getAllTagged";
 import apiClient from "../utils/api/http-config";
@@ -38,7 +38,7 @@ const Bookmarks = () => {
   const [openModal, setOpenModal] = useState(false);
 
   /**  Fetching / Getting */
-  const { classes } = bookmarkPageStyle();
+  const { classes } = taggedPageStyle();
   const { data: session } = useSession();
   const userId = session !== undefined && session?.user.id;
   const {

@@ -2,7 +2,7 @@ import { Button, Input, Text } from "@mantine/core";
 import { IconPlus, IconSearch } from "@tabler/icons";
 import { useRouter } from "next/router";
 import React, { ChangeEvent } from "react";
-import { bookmarkPageStyle } from "./styles/style";
+import { searchCreateComponentStyle } from "./styles/search&Create";
 import TagSelect from "./tagSelect";
 
 export interface SearchAndCreateInterface {
@@ -26,7 +26,7 @@ const SearchAndCreate = ({
   setValue,
   value,
 }: SearchAndCreateInterface) => {
-  const { classes } = bookmarkPageStyle();
+  const { classes } = searchCreateComponentStyle();
   const { pathname } = useRouter();
 
   return (

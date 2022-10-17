@@ -23,12 +23,16 @@ export const indexPageStyle = createStyles((theme, _params, getRef) => ({
     display: "grid",
     placeItems: "center",
     marginTop: "15vh",
+
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+      marginTop: "8vh",
+    },
   },
   header: {
     display: "flex",
     justifyContent: "space-between",
     width: "100vw",
-    padding: ".5rem 2rem",
+    padding: "1rem 2rem",
 
     h2: {
       background: theme.fn.gradient({
@@ -61,7 +65,6 @@ export const indexPageStyle = createStyles((theme, _params, getRef) => ({
   details: {
     display: "grid",
     alignItems: "center",
-    // border: "1px solid red",
     placeItems: "center",
     marginTop: "10vh",
 
@@ -91,17 +94,65 @@ export const indexPageStyle = createStyles((theme, _params, getRef) => ({
     },
   },
 
+  btnLoading_container: {
+    display: "flex",
+    placeItems: "center",
+    alignItems: "center",
+  },
+
+  btn_loading: {
+    display: "grid",
+    placeItems: "center",
+  },
+
+  stopBtn_loading: {
+    marginLeft: "1rem",
+    border: "1.5px solid red",
+    display: "grid",
+    placeItems: "center",
+    borderRadius: ".2rem",
+    cursor: "pointer",
+  },
+
+  btn_disabled: {
+    width: "90vw",
+
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+      width: "fit-content",
+    },
+  },
+
   view_tagged: {
     marginTop: "3rem",
-
+    width: "90vw",
     display: "grid",
     placeItems: "center",
     border: "1px solid gray",
     padding: "1rem",
     borderRadius: ".5rem",
+    textAlign: "center",
+    h3: {
+      background: theme.fn.gradient({
+        from: "cyan",
+        to: "indigo",
+        deg: 25,
+      }),
+      backgroundClip: "text",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+    },
+
+    span: {
+      fontSize: "1rem",
+    },
 
     button: {
       marginTop: ".9rem",
+      fontSize: "1.2rem",
+    },
+
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+      width: "40vw",
     },
   },
 
@@ -119,6 +170,17 @@ export const indexPageStyle = createStyles((theme, _params, getRef) => ({
     display: "grid",
     placeItems: "center",
     textAlign: "center",
+    marginTop: "1rem",
+
+    footer: {
+      position: "absolute",
+      bottom: "3rem",
+
+      a: {
+        textDecoration: "underline",
+        color: "#00acee",
+      },
+    },
   },
 
   title_1: {
@@ -134,7 +196,7 @@ export const indexPageStyle = createStyles((theme, _params, getRef) => ({
       backgroundClip: "text",
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
-      textTransform: "uppercase",
+      // textTransform: "uppercase",
     },
   },
 

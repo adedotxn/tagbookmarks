@@ -59,8 +59,14 @@ const InputContainer = () => {
     }
   );
 
+  // useEffect(() => {
+  //   if (noOfBookmarks === undefined || isNaN(noOfBookmarks)) {
+  //     setNumberOfBookmarks(0);
+  //   }
+  // }, [noOfBookmarks]);
+
   const initiateSearch = () => {
-    if (noOfBookmarks === (undefined || NaN)) {
+    if (noOfBookmarks === undefined || isNaN(noOfBookmarks)) {
       return alert("number is undefined or is not a valid number, ");
     }
     setStartSearch(true);
@@ -187,33 +193,20 @@ const InputContainer = () => {
             ) : (
               <>
                 {startSearch && fetchStatus == "fetching" ? (
-                  <div
-                    style={{
-                      display: "flex",
-                      placeItems: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Button style={{ display: "grid", placeItems: "center" }}>
+                  <div className={classes.btnLoading_container}>
+                    <Button className={classes.btn_loading}>
                       <Loader variant="dots" color="white" size={30} />
                     </Button>
                     <div
                       onClick={stopSearch}
-                      style={{
-                        marginLeft: "1rem",
-                        border: "1.5px solid red",
-                        display: "grid",
-                        placeItems: "center",
-                        borderRadius: ".2rem",
-                        cursor: "pointer",
-                      }}
+                      className={classes.stopBtn_loading}
                     >
                       <IconX color="red" />
                     </div>
                   </div>
                 ) : (
-                  <Button disabled>
-                    Waiting for your commmand milord/lady
+                  <Button className={classes.btn_disabled} disabled>
+                    Waiting for your commmand
                   </Button>
                 )}
               </>
@@ -224,13 +217,14 @@ const InputContainer = () => {
         </div>
 
         <div className={classes.view_tagged}>
-          <Title order={4}>Already have some bookmarks tagged?</Title>
+          <Title order={3}>Already have some bookmarks tagged?</Title>
           <Button
             variant="default"
             component="a"
             color="gray"
             href="/tagged"
             compact
+            mt={5}
           >
             Go view tagged bookmark-tweets
           </Button>

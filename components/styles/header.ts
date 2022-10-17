@@ -1,6 +1,6 @@
 import { createStyles } from "@mantine/core";
 
-export const headerStyle = createStyles((theme, _params, getRef) => ({
+export const headerStyle = createStyles((theme, _params) => ({
   header: {
     display: "flex",
     alignItems: "center",

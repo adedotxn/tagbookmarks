@@ -1,10 +1,13 @@
 import { createStyles } from "@mantine/core";
 
-export const cardStyle = createStyles((theme, _params, getRef) => ({
+export const cardStyle = createStyles((theme, _params) => ({
   cards: {
-    ref: getRef("cards"),
     width: "80vw",
     marginTop: "0rem",
+
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+      width: "40vw",
+    },
   },
 
   card_section: {
@@ -17,11 +20,5 @@ export const cardStyle = createStyles((theme, _params, getRef) => ({
 
   card_btns: {
     marginTop: "1rem",
-  },
-
-  [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
-    [`& .${getRef("cards")}`]: {
-      width: "40vw",
-    },
   },
 }));

@@ -5,8 +5,16 @@ import EmptyBookmarks from "../../components/bookmarks/empty";
 import BookmarksPageHeader from "../../components/bookmarks/header";
 import CreateTagModal from "../../components/modal/create_tag_modal";
 import SearchAndCreate from "../../components/search_and_create";
-import { bookmarkPageStyle } from "../../components/styles/style";
+// import { bookmarkPageStyle } from "../../components/styles/bookmark";
+import { createStyles } from "@mantine/core";
 import { useActiveBookmarks } from "../../utils/context";
+
+const bookmarkPageStyle = createStyles((_params) => ({
+  wrapper: {
+    display: "grid",
+    placeItems: "center",
+  },
+}));
 
 const Bookmarks = () => {
   /** States */

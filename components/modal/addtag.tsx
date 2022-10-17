@@ -14,7 +14,7 @@ export interface addTagInterface {
   allTags: any;
   tagsLoading: boolean;
   isTagError: boolean;
-  tagError: unknown;
+  tagError?: unknown;
 }
 
 const AddtagModal = ({
@@ -25,7 +25,6 @@ const AddtagModal = ({
   allTags,
   tagsLoading,
   isTagError,
-  tagError,
 }: addTagInterface): JSX.Element => {
   const [value, setValue] = useState<string[]>([]);
   const [openCreateTag, setOpenCreateTag] = useState<boolean>(false);

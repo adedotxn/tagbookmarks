@@ -7,7 +7,7 @@ import { savedInterface } from "../../pages/tagged";
 import { useTags } from "../../utils/api/hooks/getAllUserTags";
 import EmptyBookmarks from "../bookmarks/empty";
 import AddtagModal from "../modal/addtag";
-import { bookmarkPageStyle } from "../styles/style";
+import { taggedCardsComponentStyle } from "../styles/taggedPage/taggedCards";
 
 interface TaggedCardsInterface {
   userData: {
@@ -26,7 +26,7 @@ const TaggedCards = ({
 }: TaggedCardsInterface) => {
   /**  Fetching / Getting */
   const { data: session } = useSession();
-  const { classes } = bookmarkPageStyle();
+  const { classes } = taggedCardsComponentStyle();
   const USER_ID = session !== undefined && session?.user.id;
   const { data: allTags, isLoading: tagsLoading } = useTags(USER_ID);
 

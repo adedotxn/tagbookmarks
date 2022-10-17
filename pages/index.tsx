@@ -55,12 +55,12 @@ const Home = () => {
                 twitter bookmarks.
               </Title>
               <Title className={classes.title_2} order={2}>
-                Add <span>tags</span> to specific/special bookmarked tweets.
+                Pin <span>tags / labels</span> to bookmarked tweets.
               </Title>
 
               <div>
                 <Button
-                  mt={20}
+                  mt={25}
                   onClick={() => signIn("twitter")}
                   leftIcon={<IconBrandTwitter />}
                   component="a"
@@ -70,6 +70,17 @@ const Home = () => {
                   Sign In with Twitter
                 </Button>
               </div>
+
+              <footer>
+                © adedotxn 2022. <br /> nifty tool built by{" "}
+                <a
+                  target="_blank"
+                  href="https://twitter.com/adedotxn"
+                  rel="noreferrer"
+                >
+                  @adedotxn
+                </a>
+              </footer>
             </section>
           </>
         )}
