@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Group, Text } from "@mantine/core";
+import { Badge, Button, Card, Group, Text, Title } from "@mantine/core";
 import { IconBrandTwitter } from "@tabler/icons";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -69,7 +69,8 @@ const TaggedCards = ({
                     withBorder
                   >
                     <Card.Section className={classes.card_section}>
-                      <Group>
+                      <div>
+                        <Title order={3}> {data.name} </Title>
                         <Link href={`https://twitter.com/${data.username}`}>
                           <a target="blank">
                             <Text className={classes.username} weight={800}>
@@ -77,7 +78,7 @@ const TaggedCards = ({
                             </Text>
                           </a>
                         </Link>
-                      </Group>
+                      </div>
 
                       <Text mt={5} weight={500} size="sm">
                         {tweet}

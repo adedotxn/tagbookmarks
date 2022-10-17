@@ -55,7 +55,7 @@ const Home = () => {
                 twitter bookmarks.
               </Title>
               <Title className={classes.title_2} order={2}>
-                Pin <span>tags / labels</span> to bookmarked tweets.
+                Pin <span>tags / labels</span> to your bookmarked tweets.
               </Title>
 
               <div>

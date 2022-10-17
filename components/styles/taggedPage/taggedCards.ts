@@ -12,11 +12,19 @@ export const taggedCardsComponentStyle = createStyles(
       },
     },
 
-    card_section: { padding: "1rem" },
+    card_section: {
+      padding: "1rem",
+      div: {
+        h3: {
+          fontSize: "1.1rem",
+        },
+      },
+    },
 
     username: {
-      // borderBottom: "2px solid grey",
       textDecoration: "underline",
+      fontSize: ".85rem",
+      marginLeft: ".5rem",
     },
 
     card_btns: {

@@ -12,10 +12,19 @@ export const cardStyle = createStyles((theme, _params) => ({
 
   card_section: {
     padding: "1rem",
+    display: "grid",
+
+    div: {
+      h3: {
+        fontSize: "1.1rem",
+      },
+    },
   },
 
   username: {
     textDecoration: "underline",
+    fontSize: ".85rem",
+    marginLeft: ".5rem",
   },
 
   card_btns: {
