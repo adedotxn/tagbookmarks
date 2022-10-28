@@ -64,13 +64,9 @@ const TagBadge = ({ tweepId, tweetId }: TagBadgeInterface): JSX.Element => {
       </>
     );
   } else if (data.length === 0) {
-    return <div>No tags on tweet</div>;
+    return <div></div>;
   } else {
-    return (
-      <div>
-        <p>.</p>
-      </div>
-    );
+    return <div>.</div>;
   }
 };
 
