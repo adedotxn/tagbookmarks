@@ -111,7 +111,7 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
                     <TwitterTweetEmbed
                       options={{ height: 150, theme: "dark" }}
                       tweetId={data.id}
-                      placeholder={<Loader variant="dots" />}
+                      placeholder={<Loader mt={10} ml={7} variant="dots" />}
                     />
                   )}
 

@@ -1,6 +1,6 @@
-import { Box, Burger, Button, Drawer, NavLink } from "@mantine/core";
+import { Burger, Button, Drawer, NavLink } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
-import { IconBrandTwitter, IconHome, IconTag } from "@tabler/icons";
+import { IconHome, IconTag } from "@tabler/icons";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -51,8 +51,8 @@ const BookmarksPageHeader = () => {
           position="bottom"
           opened={openedDrawer}
           onClose={() => setOpenedDrawer(false)}
-        >
-          <Box>
+        >       
+          <div>
             <Link href="/" passHref>
               <NavLink
                 icon={<IconHome />}
@@ -62,7 +62,7 @@ const BookmarksPageHeader = () => {
                 active={pathname === "/"}
               />
             </Link>
-            <Link href={`bookmarks/${session?.user?.name}`} passHref>
+            {/* <Link href={`bookmarks/${session?.user?.name}`} passHref>
               <NavLink
                 icon={<IconBrandTwitter />}
                 variant="light"
@@ -70,17 +70,17 @@ const BookmarksPageHeader = () => {
                 color="blue"
                 active={pathname === `/test`}
               />
-            </Link>
+            </Link> */}
             <Link href="/tagged" passHref>
               <NavLink
                 icon={<IconTag />}
                 variant="light"
-                label="View tagged bookmark-tweets"
+                label="View tagged bookmarks"
                 color="gray"
                 active={pathname === "/tagged"}
               />
             </Link>
-          </Box>
+          </div>
         </Drawer>
 
         <h1>tagBookmarks</h1>

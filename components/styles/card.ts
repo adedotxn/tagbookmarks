@@ -2,7 +2,7 @@ import { createStyles } from "@mantine/core";
 
 export const cardStyle = createStyles((theme, _params) => ({
   cards: {
-    width: "80vw",
+    width: "90vw",
     marginTop: "0rem",
 
     [`@media (min-width: ${theme.breakpoints.sm}px)`]: {

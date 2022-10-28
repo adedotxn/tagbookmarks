@@ -2,43 +2,53 @@
 import { verifySignature } from "@upstash/qstash/nextjs";
 import axios from "axios";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { getToken } from "next-auth/jwt";
+import connect from "../../db/connect";
+import DBUser from "../../db/models/user";
 
+/* 
+  * UNDONE -- still getting errors
+
+  *Trying to setup a cron job to refresh user access token per hour with Qstash
+  *so that users don't have to reauthorise the app after leaving for a few hours or so
+  */
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const token = await getToken({
-    req,
-    secret: process.env.NEXTAUTH_SECRET,
-  });
-  const REFRESH_TOKEN = token?.refreshToken;
+  try {
+    await connect();
+    const data = await DBUser.find({});
+    const refreshTokensArray: string[] = [];
+    data.forEach((e) => refreshTokensArray.push(e.refreshToken!));
 
-  if (req.method === "POST") {
-    try {
-      console.log("got Token", REFRESH_TOKEN);
+    refreshTokensArray.forEach(async (refreshToken: string) => {
+      console.log("\nTrying....");
+      try {
+        console.log("\nTrying x2....");
+        await axios
+          .post(
+            "https://api.twitter.com/2/oauth2/token",
+            new URLSearchParams({
+              refresh_token: refreshToken,
+              grant_type: "refresh_token",
+            }),
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+                Authorization: `Basic ${process.env.CONF_HEADER}`,
+              },
+            }
+          )
+          .then((response) => {
+            console.log("chained response", response);
+          });
+      } catch (error) {
+        console.log("\n Should Catch", error);
+      }
+    });
 
-      const response = await axios.post(
-        "https://api.twitter.com/2/oauth2/token",
-        new URLSearchParams({
-          refresh_token: `${REFRESH_TOKEN}`,
-          grant_type: "refresh_token",
-        }),
-        {
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded",
-            Authorization: `Basic ${process.env.CONF_HEADER}`,
-          },
-        }
-      );
-
-      console.log("cron response", response);
-    } catch (error) {
-      console.log("refresh error", error);
-      return res
-        .status(400)
-        .json({ statusCode: 500, message: error, tokenCheck: REFRESH_TOKEN });
-    }
-  } else {
-    res.setHeader("Allow", "POST");
-    res.status(405).end("Method Not Allowed");
+    // console.log("data", data);
+    res.status(200).json(data);
+  } catch (error) {
+    console.log("error", error);
+    return res.status(400).json({ error });
   }
 }
 

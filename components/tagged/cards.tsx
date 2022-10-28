@@ -117,7 +117,9 @@ const TaggedCards = ({
                         <TwitterTweetEmbed
                           options={{ height: 150, theme: "dark" }}
                           tweetId={data.id}
-                          placeholder={<Loader variant="dots" />}
+                          placeholder={
+                            <Loader mt={10} ml={10} variant="dots" />
+                          }
                         />
                       )}
 

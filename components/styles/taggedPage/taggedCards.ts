@@ -4,7 +4,7 @@ export const taggedCardsComponentStyle = createStyles(
   (theme, _params, getRef) => ({
     cards: {
       ref: getRef("cards"),
-      width: "80vw",
+      width: "90vw",
       marginTop: "0rem",
 
       [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
