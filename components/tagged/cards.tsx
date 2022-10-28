@@ -4,6 +4,7 @@ import {
   Card,
   Chip,
   Group,
+  Loader,
   Stack,
   Text,
   Title,
@@ -116,6 +117,7 @@ const TaggedCards = ({
                         <TwitterTweetEmbed
                           options={{ height: 150, theme: "dark" }}
                           tweetId={data.id}
+                          placeholder={<Loader variant="dots" />}
                         />
                       )}
 

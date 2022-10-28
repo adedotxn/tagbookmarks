@@ -1,4 +1,4 @@
-import { Button, Card, Chip, Group, Text, Title } from "@mantine/core";
+import { Button, Card, Chip, Group, Loader, Text, Title } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconBrandTwitter } from "@tabler/icons";
 import { useSession } from "next-auth/react";
@@ -111,6 +111,7 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
                     <TwitterTweetEmbed
                       options={{ height: 150, theme: "dark" }}
                       tweetId={data.id}
+                      placeholder={<Loader variant="dots" />}
                     />
                   )}
 
