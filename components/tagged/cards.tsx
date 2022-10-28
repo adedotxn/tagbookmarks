@@ -1,8 +1,18 @@
-import { Badge, Button, Card, Group, Text, Title } from "@mantine/core";
+import {
+  Badge,
+  Button,
+  Card,
+  Chip,
+  Group,
+  Stack,
+  Text,
+  Title,
+} from "@mantine/core";
 import { IconBrandTwitter } from "@tabler/icons";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import { TwitterTweetEmbed } from "react-twitter-embed";
 import { savedInterface } from "../../pages/tagged";
 import { useTags } from "../../utils/api/hooks/getAllUserTags";
 import EmptyBookmarks from "../bookmarks/empty";
@@ -29,12 +39,21 @@ const TaggedCards = ({
   const { classes } = taggedCardsComponentStyle();
   const USER_ID = session !== undefined && session?.user.id;
   const { data: allTags, isLoading: tagsLoading } = useTags(USER_ID);
+  const [showEmbed, setShowEmbed] = useState("");
 
   /** States */
   const [tagId, setTagId] = useState("");
 
   const handleTagModal = (id: string) => {
     setTagId(id);
+  };
+  const handleShowEmbed = (id: string) => {
+    if (id === showEmbed) {
+      setShowEmbed("shagabumm");
+      return;
+    }
+
+    setShowEmbed(id);
   };
 
   return (
@@ -59,7 +78,7 @@ const TaggedCards = ({
               const tweetLink = data.text.slice(-24);
               const tweet = data.text;
               return (
-                <div key={`${data.id}${index}`}>
+                <Stack spacing="lg" key={`${data.id}${index}`}>
                   <Card
                     className={classes.cards}
                     shadow="sm"
@@ -84,10 +103,21 @@ const TaggedCards = ({
                         {tweet}
                       </Text>
 
-                      {/* <TwitterTweetEmbed
-                          options={{ height: 200, theme: "dark" }}
+                      <Chip
+                        mt={20}
+                        checked={showEmbed === data.id}
+                        onChange={() => handleShowEmbed(data.id)}
+                        variant="filled"
+                      >
+                        Show tweet embed
+                      </Chip>
+
+                      {showEmbed === data.id && (
+                        <TwitterTweetEmbed
+                          options={{ height: 150, theme: "dark" }}
                           tweetId={data.id}
-                        /> */}
+                        />
+                      )}
 
                       <Group position="center" className={classes.card_btns}>
                         <Button
@@ -148,7 +178,7 @@ const TaggedCards = ({
 
                   {/* <TwitterTweetEmbed tweetId={data.id} /> */}
                   {/* <TweetEmbed tweetId={data.id} /> */}
-                </div>
+                </Stack>
               );
             })}
         </>

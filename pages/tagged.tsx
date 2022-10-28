@@ -79,6 +79,7 @@ const Bookmarks = () => {
 
   if (error) {
     if (error instanceof Error) {
+      console.log("error", error);
       return (
         <div>
           <ErrorComponent error={error?.message} />

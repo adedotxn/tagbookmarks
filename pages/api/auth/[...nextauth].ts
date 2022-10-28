@@ -52,6 +52,7 @@ export const authOptions: NextAuthOptions = {
     },
     async signIn({ user, account }) {
       try {
+        console.log("connecting to db...")
         await connect();
         const userExists = await DBUser.find({ tweepId: user?.id });
         console.log("signIn-CB -- UserExists");

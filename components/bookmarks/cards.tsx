@@ -1,10 +1,11 @@
-import { Button, Card, Group, Text, Title } from "@mantine/core";
+import { Button, Card, Chip, Group, Text, Title } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import { IconBrandTwitter } from "@tabler/icons";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { TwitterTweetEmbed } from "react-twitter-embed";
 import { useTags } from "../../utils/api/hooks/getAllUserTags";
 import { BookMarkInterface } from "../../utils/interface/context.interface";
 import AddtagModal from "../modal/addtag";
@@ -26,6 +27,7 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
   /** States */
   const [tagId, setTagId] = useState("");
   const [debounced] = useDebouncedValue(search, 200);
+  const [showEmbed, setShowEmbed] = useState("");
 
   /**  Fetching / Getting */
   const { data: session } = useSession();
@@ -42,6 +44,15 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
 
   const handleTagModal = (id: string) => {
     setTagId(id);
+  };
+
+  const handleShowEmbed = (id: string) => {
+    if (id === showEmbed) {
+      setShowEmbed("shagabumm");
+      return;
+    }
+
+    setShowEmbed(id);
   };
 
   return (
@@ -87,10 +98,21 @@ const BookmarkCards = ({ data, search }: BookmarkCardInteface) => {
                     {tweet}
                   </Text>
 
-                  {/* <TwitterTweetEmbed
-                          options={{ height: 200, theme: "dark" }}
-                          tweetId={data.id}
-                        /> */}
+                  <Chip
+                    mt={20}
+                    checked={showEmbed === data.id}
+                    onChange={() => handleShowEmbed(data.id)}
+                    variant="filled"
+                  >
+                    Show tweet embed
+                  </Chip>
+
+                  {showEmbed === data.id && (
+                    <TwitterTweetEmbed
+                      options={{ height: 150, theme: "dark" }}
+                      tweetId={data.id}
+                    />
+                  )}
 
                   <Group position="center" className={classes.card_btns}>
                     <Button

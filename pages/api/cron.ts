@@ -5,15 +5,14 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { getToken } from "next-auth/jwt";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const token = await getToken({
+    req,
+    secret: process.env.NEXTAUTH_SECRET,
+  });
+  const REFRESH_TOKEN = token?.refreshToken;
+
   if (req.method === "POST") {
     try {
-      const token = await getToken({
-        req,
-        secret: process.env.NEXTAUTH_SECRET,
-      });
-
-      const REFRESH_TOKEN = token?.refreshToken;
-
       console.log("got Token", REFRESH_TOKEN);
 
       const response = await axios.post(
@@ -33,7 +32,9 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       console.log("cron response", response);
     } catch (error) {
       console.log("refresh error", error);
-      return res.status(400).json({ statusCode: 500, message: error });
+      return res
+        .status(400)
+        .json({ statusCode: 500, message: error, tokenCheck: REFRESH_TOKEN });
     }
   } else {
     res.setHeader("Allow", "POST");
