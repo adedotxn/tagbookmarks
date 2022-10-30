@@ -140,7 +140,9 @@ export default async function handler(
           console.log("sucesss", response);
         } catch (error) {
           console.log("Error refreshing tokens", error);
-          res.json({ status: "Error refreshing token", message: error });
+          return res
+            .status(400)
+            .json({ status: "Error refreshing token", message: error });
         }
       } else {
         console.log("Error getting bookmarks", error);

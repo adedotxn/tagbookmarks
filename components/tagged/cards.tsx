@@ -110,7 +110,9 @@ const TaggedCards = ({
                         onChange={() => handleShowEmbed(data.id)}
                         variant="filled"
                       >
-                        Show tweet embed
+                        {showEmbed === data.id
+                          ? "Close tweet embed"
+                          : "Show tweet embed"}
                       </Chip>
 
                       {showEmbed === data.id && (

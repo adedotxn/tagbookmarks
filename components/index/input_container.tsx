@@ -1,11 +1,12 @@
 import { Button, Group, Input, Loader, Title, Tooltip } from "@mantine/core";
 import { IconAlertCircle, IconNumber, IconX } from "@tabler/icons";
 import { useQuery } from "@tanstack/react-query";
-import { signIn, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { ChangeEvent, useEffect, useState } from "react";
 import apiClient from "../../utils/api/http-config";
 import { useActiveBookmarks } from "../../utils/context";
+import ErrorComponent from "../bookmarks/error";
 import { indexPageStyle } from "../styles/index_style";
 import SearchButton from "./searchButton";
 
@@ -107,29 +108,25 @@ const InputContainer = () => {
   };
 
   if (isError) {
-    console.log({ error });
-    return (
-      <section className={classes.errorComponent}>
-        <div>
-          <p>
-            Sorry 😬, Failed getting your bookmarks. Twitter requires your
-            reauthorization
-          </p>
-          <p>
-            or i just have not figured out how to persist your authorization
-            state (yet) 😔, either way
-          </p>
-        </div>
+    if (error instanceof Error) {
+      return (
+        <ErrorComponent
+          errorMsg={error.message}
+          error="Error getting bookmarks. Please reauthorize tagBookmarks for twitter and try fetching again"
+        />
+      );
+    } else {
+      return <ErrorComponent errorMsg="Unexpected" error="Unexpected Error" />;
+    }
+  }
 
-        <Button
-          variant="default"
-          color="gray"
-          compact
-          onClick={() => signIn("twitter")}
-        >
-          Authorize twitter-bkmrkd again :)
-        </Button>
-      </section>
+  if (returnedBookmarks?.data.length === 0) {
+    return (
+      <ErrorComponent
+        errorMsg=""
+        error="Something either went wrong or your twitter bookmarks are empty. 
+              Make sure you have at least one tweet bookmarked"
+      />
     );
   }
 

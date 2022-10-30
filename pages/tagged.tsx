@@ -43,7 +43,6 @@ const Bookmarks = () => {
   const userId = session !== undefined && session?.user.id;
   const {
     data: all,
-    error,
     isLoading: taggedLoading,
     isError: isTagError,
     error: tagError,
@@ -77,17 +76,20 @@ const Bookmarks = () => {
     );
   }
 
-  if (error) {
-    if (error instanceof Error) {
-      console.log("error", error);
+  if (isTagError) {
+    if (tagError instanceof Error) {
+      console.log("error", tagError);
       return (
-        <div>
-          <ErrorComponent error={error?.message} />
+        <div className={classes.tagged_prompt}>
+          <ErrorComponent
+            errorMsg={tagError.message}
+            error="Error getting tagged bookmarks. Please reauthorize tagBookmarks for twitter and try fetching again"
+          />
         </div>
       );
     } else {
-      <div>
-        <ErrorComponent error="Unexpected Error" />
+      <div className={classes.tagged_prompt}>
+        <ErrorComponent errorMsg="Unexpected" error="Unexpected Error" />
       </div>;
     }
   }

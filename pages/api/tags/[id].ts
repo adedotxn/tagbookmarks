@@ -12,6 +12,7 @@ export default async function handler(
 ) {
   /**
    * Returns collection of a user's tagged tweets
+   * I am trying to use autoRefresher on this endpoint to check if it will solve the issue
    */
   try {
     const { id: tweepId } = req.query;

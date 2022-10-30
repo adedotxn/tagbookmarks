@@ -9,3 +9,13 @@ export const emptyComponentStyle = createStyles((_params) => ({
     height: "70vh",
   },
 }));
+
+export const errorComponentStyle = createStyles((theme, _params) => ({
+  error: {
+    width: "90vw",
+
+    [`@media (min-width: ${theme.breakpoints.sm}px)`]: {
+      width: "40vw",
+    },
+  },
+}));

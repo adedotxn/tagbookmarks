@@ -1,23 +1,30 @@
 import { Alert, Button } from "@mantine/core";
 import { IconAlertCircle } from "@tabler/icons";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { emptyComponentStyle } from "../styles/empty";
+import { errorComponentStyle } from "../styles/empty";
 
-const ErrorComponent = ({ error }: any) => {
-  const { classes } = emptyComponentStyle();
+const ErrorComponent = ({ errorMsg, error }: any) => {
+  const { classes } = errorComponentStyle();
   const router = useRouter();
 
   const message = error;
   return (
     <>
-      {/* <Box className={classes.empty}>
-        <div>
-          <Text align="center" size={20} weight={700}>
-            {message}
-          </Text>
-          <Group mt={30} position="center">
+      <div className={classes.error}>
+        <Alert icon={<IconAlertCircle size={16} />} title={message} color="red">
+          {errorMsg.includes("40") ? (
             <Button
-              // mt={20}
+              mt={10}
+              variant="default"
+              color="gray"
+              compact
+              onClick={() => signIn("twitter")}
+            >
+              Reauthorize tagbookmarks
+            </Button>
+          ) : (
+            <Button
               component="a"
               target="_blank"
               variant="default"
@@ -27,24 +34,8 @@ const ErrorComponent = ({ error }: any) => {
             >
               Go back to homepage
             </Button>
-          </Group>
-        </div>
-      </Box> */}
-      <div className={classes.empty}>
-        <Alert icon={<IconAlertCircle size={16} />} title="Bummer!" color="red">
-          {message}
+          )}
         </Alert>
-        <Button
-          mt={30}
-          component="a"
-          target="_blank"
-          variant="default"
-          color="gray"
-          compact
-          onClick={() => router.push("/")}
-        >
-          Go back to homepage
-        </Button>
       </div>
     </>
   );
