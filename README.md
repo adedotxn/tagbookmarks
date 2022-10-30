@@ -1,50 +1,32 @@
-## This is a [Next.js](https://nextjs.org/) template built mostly from [this article](https://dev.to/alexeagleson/how-to-build-scalable-architecture-for-your-nextjs-project-2pb7?signin=true) by [Alex Eagleson](https://github.com/alexeagleson) tweaked in some ways by me.
-
-## Properties
-- Engine Locking
-- Git 
-- Git hooks
-- Code formatting - Eslint & Prettier
-- Storybook
-- (OPTIONAL) Mongoose -for mongoDB
+# [TagBookmarks](https://tagbookmarks.vercel.app)
+TagBookmarks is a web app built for adding/pinning tags to your twitter bookmarks so as to be able to easily filter through your twitter bookmarks and sort of categorize them to your likeness. Fun project built by me to solve my congested twitter bookmarks issue because i can't afford twitter blue haha
 
 
-### Getting Started
+## Features
+- Fetching Bookmarks (this action is stable for bookmarks between 0 - 50 but unstable going further)
+- Creating tags : you can create the tags you'd like to pin to a tweet
+- Adding Tags : you can add single/multiple tags to specific tweets.
+- Show Embed - you can decide to view the original tweet in-app twitter style
+- Go to twitter : takes you directly to the tweet on twitter
+- View Tagged Bookmarks : shows you only bookmarks you've tagged, doesn't need to fetch from your twitter bookmarks
+- Searching : you can search through and filter through your bookmarks by username, tags, tweets or names.
 
-First, run the development server:
+## Technologies Used
+- [Next.js](https://nextjs.org/) (version 12).
+- [Mantine UI](https://mantine.dev/) : Fully Featured React Component Library.
+- [Next Auth](https://next-auth.js.org/) : User Authentication Library, specifically used for Twitter in this project.
+- Mongodb & Mongoose : to store tweet id's and tags associated with current user.
+- [node-twitter-api-v2](https://github.com/PLhery/node-twitter-api-v2) : Open Source Library used to comfortably work with twitter v2 apis - helps abstract and understand a lot of complexities. 
+- [React-Twitter-Embed](https://github.com/saurabhnemade/react-twitter-embed) : Open Source Library to embed tweets in a react web app.
 
-```bash
-git clone https://github.com/adedotxn/nextjs-scalable-template-with-mongodb.git
-cd nextjs-scalable-template-with-mongodb.git
-git remote set-url origin <your-repo-url>
-
-yarn install
-yarn  dev
-```
-
-
----
+### Problems Faced/Facing
+- Persisting app authroristaion state for a user over a long period of time so that they do not have to reauthorize the app. My code to get a new access tokn with refresh token seems to be wrong as i keep getting a "token passed in was invalid error" while trying to refresh the access token.
 
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+### Want to contribute? Getting Started
 
 [API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
 
 The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
 
-## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
