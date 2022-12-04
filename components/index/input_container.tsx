@@ -1,11 +1,16 @@
 import { Button, Group, Input, Loader, Title, Tooltip } from "@mantine/core";
 import { IconAlertCircle, IconNumber, IconX } from "@tabler/icons";
-import { useQuery } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { ChangeEvent, useEffect, useState } from "react";
-import apiClient from "../../utils/api/http-config";
-import { useActiveBookmarks } from "../../utils/context";
+import {
+  useAllBookmarks,
+  useBookmarks,
+} from "../../utils/api/hooks/getBookmarks";
+import {
+  useActiveBookmarks,
+  useAllBookmarksContextHook,
+} from "../../utils/context";
 import ErrorComponent from "../bookmarks/error";
 import { indexPageStyle } from "../styles/index_style";
 import SearchButton from "./searchButton";
@@ -32,6 +37,7 @@ const InputContainer = () => {
   const [startSearch, setStartSearch] = useState(false);
   /*const [getAll, setGetAll] = useState(false);*/
   const { activeBookmarks, setActiveBookmarks } = useActiveBookmarks();
+  const [gettingAll, setGetAll] = useState(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setNumberOfBookmarks(parseInt(e.target.value));
@@ -45,26 +51,18 @@ const InputContainer = () => {
     error,
     isFetching,
     fetchStatus,
-  } = useQuery(
-    ["Bookmarks", noOfBookmarks],
-    async () => {
-      const fetch = await apiClient.get(
-        `/bookmarks/${USER_ID}/${noOfBookmarks}`
-      );
-      console.log("fetch.data --- ", fetch.status);
-      return fetch.data;
-    },
-    {
-      retry: 5,
-      enabled: startSearch,
-    }
-  );
+  } = useBookmarks(USER_ID, noOfBookmarks, startSearch);
 
-  // useEffect(() => {
-  //   if (noOfBookmarks === undefined || isNaN(noOfBookmarks)) {
-  //     setNumberOfBookmarks(0);
-  //   }
-  // }, [noOfBookmarks]);
+  const {
+    isLoading: allLoading,
+    data: allBookmarksData,
+    error: allError,
+    isError: isAllError,
+    isFetching: isAllFetching,
+    fetchStatus: fetchAllStatus,
+  } = useAllBookmarks(USER_ID, gettingAll);
+
+  const { allBookmarks, setAllBookmarks } = useAllBookmarksContextHook();
 
   const initiateSearch = () => {
     if (noOfBookmarks === undefined || isNaN(noOfBookmarks)) {
@@ -73,10 +71,15 @@ const InputContainer = () => {
     setStartSearch(true);
   };
 
-  !isLoading &&
-    !isFetching &&
-    !isError &&
-    console.log("Boookmarks returned", activeBookmarks.length);
+  // !isLoading &&
+  //   !isFetching &&
+  //   !isError &&
+  //   console.log("Boookmarks returned", activeBookmarks.length);
+
+  // !allLoading &&
+  //   !isAllFetching &&
+  //   !isAllError &&
+  //   console.log("allBoookmarks returned", allBookmarks.length);
 
   useEffect(() => {
     !isLoading &&
@@ -92,26 +95,50 @@ const InputContainer = () => {
   ]);
 
   useEffect(() => {
-    if (isError) {
-      setStartSearch(false);
-    }
-  }, [isError]);
+    !allLoading &&
+      !isAllFetching &&
+      allBookmarksData !== undefined &&
+      setAllBookmarks(allBookmarksData.data?.bookmarks);
+  }, [allLoading, isAllFetching, allBookmarksData, setAllBookmarks]);
+
+  // useEffect(() => {
+  //   if (allBookmarks.length > 0 || isAllError) {
+  //     setGetAll(false);
+  //   }
+  // }, [allBookmarks, isAllError]);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (isError || !isLoading) {
       setStartSearch(false);
     }
-  }, [isLoading, returnedBookmarks]);
+  }, [isError, isLoading]);
 
   const stopSearch = () => {
     setStartSearch(false);
   };
+
+  const fetchingNumbered = startSearch && fetchStatus == "fetching";
+  const fetchingAll = gettingAll && fetchAllStatus == "fetching";
 
   if (isError) {
     if (error instanceof Error) {
       return (
         <ErrorComponent
           errorMsg={error.message}
+          error="Error getting bookmarks. Please reauthorize tagBookmarks for twitter and try fetching again"
+        />
+      );
+    } else {
+      return <ErrorComponent errorMsg="Unexpected" error="Unexpected Error" />;
+    }
+  }
+
+  if (isAllError) {
+    if (allError instanceof Error) {
+      console.log(allError.message);
+      return (
+        <ErrorComponent
+          errorMsg={allError.message}
           error="Error getting bookmarks. Please reauthorize tagBookmarks for twitter and try fetching again"
         />
       );
@@ -168,28 +195,52 @@ const InputContainer = () => {
             />
           </Input.Wrapper>
 
-          <SearchButton
-            initiateSearch={initiateSearch}
-            noOfBookmarks={noOfBookmarks}
-            startSearch={startSearch}
-            fetchStatus={fetchStatus}
-          />
-          {/* <Button onClick={initiateGetAll}>
-            Fetch all bookmarks from Twitter
-          </Button> */}
+          <div className={classes.buttons}>
+            <SearchButton
+              initiateSearch={initiateSearch}
+              noOfBookmarks={noOfBookmarks}
+              startSearch={startSearch}
+              fetchStatus={fetchStatus}
+            />
+
+            <div>
+              <Tooltip
+                label="This may not return > 100 but a page refresh should do the trick"
+                position="bottom"
+                withArrow
+              >
+                <Button compact size="md" onClick={() => setGetAll(true)}>
+                  Get {">"} 100 Bookmarks
+                </Button>
+              </Tooltip>
+            </div>
+          </div>
         </div>
 
         <div className={classes.defaults}>
           <Group spacing="sm" className={classes.default_btns}>
-            {returnedBookmarks ? (
+            {returnedBookmarks || allBookmarksData ? (
               <>
-                <Link href={`bookmarks/${session?.user?.name}`}>
-                  <Button>Go see bookmarks </Button>
-                </Link>
+                {allBookmarks.length > 0 && (
+                  <Link href={`all`}>
+                    <Button>
+                      all: View all ({`${allBookmarks.length}`}) bookmarks{" "}
+                    </Button>
+                  </Link>
+                )}
+
+                {activeBookmarks.length > 0 && (
+                  <Link href={`bookmarks/${session?.user?.name}`}>
+                    <Button>
+                      specifics: View {`${activeBookmarks.length}`} of your
+                      bookmarks
+                    </Button>
+                  </Link>
+                )}
               </>
             ) : (
               <>
-                {startSearch && fetchStatus == "fetching" ? (
+                {fetchingNumbered || fetchingAll ? (
                   <div className={classes.btnLoading_container}>
                     <Button className={classes.btn_loading}>
                       <Loader variant="dots" color="white" size={30} />
@@ -201,11 +252,7 @@ const InputContainer = () => {
                       <IconX color="red" />
                     </div>
                   </div>
-                ) : (
-                  <Button className={classes.btn_disabled} disabled>
-                    Waiting for your commmand
-                  </Button>
-                )}
+                ) : null}
               </>
             )}
 

@@ -26,8 +26,8 @@ export default async function handler(
   const ACCESS_TOKEN = userExists[0].accessToken;
   const REFRESH_TOKEN = userExists[0].refreshToken;
 
-  console.log("are access' equal", token?.accessToken === ACCESS_TOKEN);
-  console.log("are refresh equal", token?.refreshToken === REFRESH_TOKEN);
+  // console.log("are access' equal", token?.accessToken === ACCESS_TOKEN);
+  // console.log("are refresh equal", token?.refreshToken === REFRESH_TOKEN);
   if (ACCESS_TOKEN !== undefined || "") {
     console.log("starting tC...");
     const twitterClient = new TwitterApi(ACCESS_TOKEN);
@@ -36,41 +36,25 @@ export default async function handler(
 
     try {
       console.log("Starting bookmark endpoint call...");
-      let bookmarks;
-      if (slug.length === 1) {
-        console.log("get all bookmarks");
-        bookmarks = await readOnlyClient.v2.bookmarks({
-          expansions: ["referenced_tweets.id"],
-          "media.fields": ["duration_ms", "url"],
-          "tweet.fields": [
-            "created_at",
-            "attachments",
-            "in_reply_to_user_id",
-            "author_id",
-          ],
-        });
-      } else {
-        console.log(`get ${maxResults} bookmarks`);
-        bookmarks = await twitterClient.v2.bookmarks({
-          expansions: ["referenced_tweets.id"],
-          "media.fields": [
-            "duration_ms",
-            "url",
-            "type",
-            "media_key",
-            "width",
-            "height",
-            "preview_image_url",
-          ],
-          "tweet.fields": [
-            "created_at",
-            "attachments",
-            "in_reply_to_user_id",
-            "author_id",
-          ],
-          max_results: maxResults,
-        });
-      }
+      let bookmarks = await twitterClient.v2.bookmarks({
+        expansions: ["referenced_tweets.id"],
+        "media.fields": [
+          "duration_ms",
+          "url",
+          "type",
+          "media_key",
+          "width",
+          "height",
+          "preview_image_url",
+        ],
+        "tweet.fields": [
+          "created_at",
+          "attachments",
+          "in_reply_to_user_id",
+          "author_id",
+        ],
+        max_results: maxResults,
+      });
 
       let allBookmarks: TweetV2[] = [];
 

@@ -12,8 +12,8 @@ function SearchButton({
   fetchStatus: "fetching" | "idle" | "paused";
 }): JSX.Element {
   return (
-    <Button onClick={initiateSearch}>
-      {fetchStatus === "fetching" && startSearch ? (
+    <Button compact size="md" onClick={initiateSearch}>
+      {startSearch && fetchStatus == "fetching" ? (
         <Loader color="white" size={20} mr={20} />
       ) : (
         ""

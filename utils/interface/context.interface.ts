@@ -14,3 +14,8 @@ export interface bookmarkContextInterface {
   activeBookmarks: BookMarkInterface[];
   setActiveBookmarks: React.Dispatch<React.SetStateAction<BookMarkInterface[]>>;
 }
+
+export interface allBookmarksContextInterface {
+  allBookmarks: BookMarkInterface[];
+  setAllBookmarks: React.Dispatch<React.SetStateAction<BookMarkInterface[]>>;
+}

@@ -17,6 +17,11 @@ export const indexPageStyle = createStyles((theme, _params, getRef) => ({
         fontSize: "2.5rem",
         marginTop: "1.3rem",
       },
+      [`& .${getRef("buttons")}`]: {
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      },
     },
   },
   wrapper: {
@@ -92,6 +97,12 @@ export const indexPageStyle = createStyles((theme, _params, getRef) => ({
       marginTop: "1rem",
       fontWeight: 500,
     },
+  },
+
+  buttons: {
+    display: "grid",
+    placeItems: "center",
+    gap: 5,
   },
 
   btnLoading_container: {

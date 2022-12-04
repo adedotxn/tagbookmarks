@@ -14,6 +14,7 @@ const TagBadge = ({ tweepId, tweetId }: TagBadgeInterface): JSX.Element => {
     },
   ];
 
+  //Dynamic parallel queries
   const tagQueries = useQueries({
     queries: mockArray.map((user) => {
       return {

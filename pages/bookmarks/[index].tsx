@@ -9,7 +9,7 @@ import SearchAndCreate from "../../components/search_and_create";
 import { createStyles } from "@mantine/core";
 import { useActiveBookmarks } from "../../utils/context";
 
-const bookmarkPageStyle = createStyles((_params) => ({
+export const bookmarkPageStyle = createStyles((_params) => ({
   wrapper: {
     display: "grid",
     placeItems: "center",

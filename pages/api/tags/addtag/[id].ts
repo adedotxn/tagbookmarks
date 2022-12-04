@@ -26,6 +26,7 @@ export default async function handler(
     const tag = req.body.tags;
 
     const tweepId = req.query.id as string;
+    // const {id : tweepId} = req.query
 
     const userExists: UserInterface[] = await DBUser.find({ tweepId });
     if (userExists.length === 0) {
